@@ -1,4 +1,4 @@
-// Hero: the post-shutter reveal (tube light, painted name, flame, hung signs),
+// Hero: the post-shutter reveal (tube light, painted name, flame and embers, hung signs),
 // the idle loops (tossed ingredients), and a gentle scroll parallax.
 
 import gsap from 'gsap';
@@ -17,6 +17,7 @@ export function initHero({ reduced, preloading, mode }) {
   const tagline = q('[data-tagline]');
   const signs = qa('[data-hang]');
   const flames = qa('.flame');
+  const embers = q('.wok__embers');
   const toss = qa('.toss__inner');
   const actions = qa('[data-hero-actions] .btn, [data-hero-actions] .hero__where');
 
@@ -74,6 +75,7 @@ export function initHero({ reduced, preloading, mode }) {
     gsap.set(dim, { opacity: 0.62 });
     gsap.set(tube, { backgroundColor: TUBE_DIM });
     gsap.set(flames, { scaleY: 0, transformOrigin: '50% 100%' });
+    gsap.set(embers, { opacity: 0 });
     gsap.set(signs, { rotation: (i) => (i === 0 ? -10 : 10), y: -16, opacity: 0, transformOrigin: '50% 0' });
     gsap.set(actions, { y: 26, opacity: 0 });
     gsap.set(toss, { opacity: 0 });
@@ -110,6 +112,7 @@ export function initHero({ reduced, preloading, mode }) {
     tl.to(split.chars, { yPercent: 0, opacity: 1, duration: 0.95, stagger: 0.06 }, 0.2)
       .to(tagline, { clipPath: 'inset(0 0% 0 0)', duration: 0.85, ease: 'power3.inOut' }, 0.6)
       .to(flames, { scaleY: 1, duration: 1.05, stagger: 0.08 }, 0.4)
+      .to(embers, { opacity: 1, duration: 0.6, ease: 'power1.out' }, 1.1)
       .to(toss, { opacity: 1, duration: 0.5, stagger: 0.04, ease: 'power1.out' }, 1.0)
       .to(signs, { rotation: 0, y: 0, opacity: 1, duration: 1.3, stagger: 0.14 }, 0.55)
       .to(actions, { y: 0, opacity: 1, duration: 0.8, stagger: 0.08 }, 0.9);

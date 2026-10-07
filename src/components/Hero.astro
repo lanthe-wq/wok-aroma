@@ -1,0 +1,80 @@
+---
+import { site, telHref } from '../config/site.js';
+import { momos, byId, fromPrice, rupees, combos } from '../config/menu.js';
+import WokArt from './WokArt.astro';
+import Icon from './Icon.astro';
+
+// "From" prices are derived from the menu, so they can never drift from it.
+const fromLines = [
+  ['Momos', fromPrice(momos)],
+  ['Noodles', fromPrice(byId.noodles)],
+  ['Fried rice', fromPrice(byId.rice)],
+  ['Combos', Math.min(...combos.map((c) => c.price))],
+];
+---
+
+<section class="hero" id="top" aria-labelledby="hero-title">
+  <div class="fascia" data-fascia>
+    <span class="fascia__tube" aria-hidden="true"></span>
+    <div class="fascia__board">
+      <h1 class="fascia__name" id="hero-title" data-name>{site.name}</h1>
+      <p class="fascia__tagline" data-tagline>{site.tagline}</p>
+      <span class="fascia__dim" aria-hidden="true" data-dim></span>
+    </div>
+  </div>
+
+  <div class="hero__stage">
+    <aside class="sign sign--rates" data-hang aria-label="A few starting prices">
+      <span class="sign__chains" aria-hidden="true"></span>
+      <div class="sign__plate">
+        <p class="sign__title">Rate list</p>
+        <p class="sign__sub">Starting at</p>
+        <ul class="sign__lines">
+          {
+            fromLines.map(([label, price]) => (
+              <li>
+                <span>{label}</span>
+                <b>{rupees(price)}</b>
+              </li>
+            ))
+          }
+        </ul>
+        <a class="sign__more" href="#rates">
+          Full list <Icon name="down" />
+        </a>
+      </div>
+    </aside>
+
+    <div class="hero__art" data-hero-art>
+      <WokArt />
+    </div>
+
+    <aside class="sign sign--open" data-hang aria-label="Opening hours">
+      <span class="sign__chains" aria-hidden="true"></span>
+      <div class="sign__plate">
+        <p class="sign__open">Open</p>
+        <p class="sign__hours">24 hours</p>
+        <p class="sign__hindi" lang="hi">24 घंटे खुला</p>
+      </div>
+    </aside>
+  </div>
+
+  <div class="hero__counter" data-hero-actions>
+    <div class="hero__buttons">
+      <a class="btn btn--call" href={telHref}>
+        <span class="btn__small">Call to order</span>
+        <span class="btn__big">{site.phone.display}</span>
+      </a>
+      <a class="btn btn--ink" href={site.links.maps} target="_blank" rel="noopener">
+        <Icon name="pin" /> Directions
+      </a>
+      <a class="btn btn--paper" href="#rates">
+        <Icon name="list" /> Rate list
+      </a>
+    </div>
+    <p class="hero__where">
+      <span>{site.address.shop}, {site.address.building}, {site.address.locality}</span>
+      <span>Free home delivery within {site.delivery.freeWithinKm} km, minimum order ₹{site.delivery.minimumOrder}</span>
+    </p>
+  </div>
+</section>

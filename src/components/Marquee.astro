@@ -1,0 +1,33 @@
+---
+// Shop-ticker band. Decorative: every word also appears on the rate list.
+const words = [
+  'Momos',
+  'Hakka Noodles',
+  'Fried Rice',
+  'Manchurian',
+  'Chilli Paneer',
+  'Thukpa',
+  'Maggi',
+  'Shakes',
+  'Open 24 hours',
+];
+---
+
+<div class="marquee on-dark" data-marquee aria-hidden="true">
+  <div class="marquee__track" data-marquee-track>
+    {
+      [0, 1].map(() => (
+        <ul class="marquee__set">
+          {words.map((w) => (
+            <li>
+              <span>{w}</span>
+              <svg viewBox="0 0 12 16" width="12" height="16" focusable="false">
+                <path d="M6 0C8 5 12 7 12 11a6 6 0 0 1-12 0C0 7 4 5 6 0z" fill="currentColor" />
+              </svg>
+            </li>
+          ))}
+        </ul>
+      ))
+    }
+  </div>
+</div>

@@ -1,0 +1,29 @@
+---
+import { site, telHref } from '../config/site.js';
+import Icon from './Icon.astro';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="footer on-dark" data-footer>
+  <div class="footer__drum" aria-hidden="true"></div>
+  <div class="footer__inner" data-footer-inner>
+    <p class="footer__line" data-footer-line>The shutter stays up.</p>
+    <p class="footer__sub">
+      Open 24 hours. Call <a href={telHref}>{site.phone.display}</a> or come to {site.address.shop}, {site.address.building}.
+    </p>
+    <div class="footer__links">
+      <a class="btn btn--paper" href={site.links.maps} target="_blank" rel="noopener">
+        <Icon name="pin" /> Directions
+      </a>
+      <a class="btn btn--call" href={telHref}>
+        <span class="btn__small">Call to order</span>
+        <span class="btn__big">{site.phone.display}</span>
+      </a>
+      <a class="footer__top" href="#top"><Icon name="up" /> Back to top</a>
+    </div>
+    <p class="footer__fine">
+      Prices and hours are as listed by {site.name} and may change. © {year}{' '}{site.name}, {site.address.locality}, {site.address.city}.
+    </p>
+  </div>
+</footer>

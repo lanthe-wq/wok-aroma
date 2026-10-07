@@ -1,0 +1,54 @@
+---
+import { site, telHref } from '../config/site.js';
+import Icon from './Icon.astro';
+---
+
+<section class="visit" id="visit" aria-labelledby="visit-title">
+  <div class="visit__plate" aria-hidden="true">
+    <p class="visit__shopno">{site.address.shop}</p>
+    <p class="visit__building">{site.address.building}</p>
+  </div>
+
+  <div class="visit__info">
+    <h2 id="visit-title">Find us</h2>
+    <address class="visit__address">
+      {site.address.lines.map((l) => <span>{l}</span>)}
+    </address>
+
+    <dl class="visit__facts">
+      <div>
+        <dt>Hours</dt>
+        <dd>{site.hours.summary} <small>({site.hours.source})</small></dd>
+      </div>
+      <div>
+        <dt>Phone</dt>
+        <dd><a href={telHref}>{site.phone.display}</a></dd>
+      </div>
+      <div>
+        <dt>Typical spend</dt>
+        <dd>{site.priceGuide.label} <small>({site.priceGuide.source})</small></dd>
+      </div>
+      <div>
+        <dt>Plus code</dt>
+        <dd>{site.address.plusCode} {site.address.city}</dd>
+      </div>
+    </dl>
+
+    <div class="visit__actions">
+      <a class="btn btn--ink" href={site.links.maps} target="_blank" rel="noopener">
+        <Icon name="pin" /> Directions on Google Maps
+      </a>
+      <a class="btn btn--call" href={telHref}>
+        <span class="btn__small">Call to order</span>
+        <span class="btn__big">{site.phone.display}</span>
+      </a>
+      {
+        site.links.instagram && (
+          <a class="btn btn--paper" href={site.links.instagram} target="_blank" rel="noopener">
+            Instagram
+          </a>
+        )
+      }
+    </div>
+  </div>
+</section>

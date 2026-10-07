@@ -1,0 +1,108 @@
+---
+import { site } from '../config/site.js';
+
+// Fonts are self-hosted via Fontsource: no third-party requests at runtime.
+import '@fontsource/yatra-one/latin-400.css';
+import '@fontsource/yatra-one/latin-ext-400.css';
+import '@fontsource/yatra-one/devanagari-400.css';
+import '@fontsource-variable/teko/wght.css';
+import '@fontsource/hind/latin-400.css';
+import '@fontsource/hind/latin-600.css';
+import '@fontsource/hind/latin-700.css';
+import 'lenis/dist/lenis.css';
+
+import '../styles/base.css';
+import '../styles/preloader.css';
+import '../styles/hero.css';
+import '../styles/sections.css';
+
+import yatraLatin from '@fontsource/yatra-one/files/yatra-one-latin-400-normal.woff2?url';
+import tekoLatin from '@fontsource-variable/teko/files/teko-latin-wght-normal.woff2?url';
+
+const { title, description } = Astro.props;
+const canonical = new URL('/', Astro.site).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Restaurant',
+  name: site.name,
+  description,
+  telephone: site.phone.tel,
+  servesCuisine: 'Chinese',
+  priceRange: site.priceGuide.label,
+  hasMap: site.links.maps,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: `${site.address.lines[0]}, ${site.address.lines[1]}`,
+    addressLocality: site.address.city,
+    addressRegion: site.address.region,
+    postalCode: site.address.postalCode,
+    addressCountry: 'IN',
+  },
+  openingHoursSpecification: {
+    '@type': 'OpeningHoursSpecification',
+    dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+    opens: '00:00',
+    closes: '23:59',
+  },
+};
+---
+
+<!doctype html>
+<html lang="en-IN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#f4b400" />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+
+    <meta property="og:type" content="restaurant.restaurant" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={new URL('/og.png', Astro.site).href} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={`${site.name} signboard: ${site.tagline}`} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="preload" href={yatraLatin} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={tekoLatin} as="font" type="font/woff2" crossorigin />
+
+    <!--
+      Decides how this visit opens, before first paint.
+      preload       first visit this session: the full shutter sequence
+      preload-quick repeat visit this session: a short version
+      preload-lite  reduced motion: a plain progress plate, no movement
+      Add ?preload to the address to force the full sequence.
+      The timeout is a failsafe: nobody is ever left behind the shutter.
+    -->
+    <script is:inline>
+      (function () {
+        var d = document.documentElement;
+        d.classList.add('js');
+        var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+        var seen = false;
+        try {
+          seen = sessionStorage.getItem('wa-seen') === '1';
+        } catch (e) {}
+        var forced = /[?&]preload/.test(location.search);
+        var mode = reduce ? 'preload-lite' : seen && !forced ? 'preload-quick' : 'preload';
+        d.classList.add('preload', mode);
+        d.setAttribute('data-preload', mode);
+        setTimeout(function () {
+          d.classList.remove('preload', 'preload-quick', 'preload-lite');
+        }, 9000);
+      })();
+    </script>
+
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

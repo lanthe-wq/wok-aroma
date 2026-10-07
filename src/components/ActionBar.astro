@@ -1,0 +1,13 @@
+---
+// Thumb-reach actions on phones: call, directions, rate list.
+import { site, telHref } from '../config/site.js';
+import Icon from './Icon.astro';
+---
+
+<nav class="actions" aria-label="Quick actions">
+  <a class="actions__call" href={telHref}><Icon name="phone" /> Call</a>
+  <a class="actions__map" href={site.links.maps} target="_blank" rel="noopener"
+    ><Icon name="pin" /> Directions</a
+  >
+  <a class="actions__rates" href="#rates"><Icon name="list" /> Rate list</a>
+</nav>

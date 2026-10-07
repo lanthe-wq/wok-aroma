@@ -1,0 +1,17 @@
+---
+import { site, telHref } from '../config/site.js';
+import Icon from './Icon.astro';
+---
+
+<header class="nav on-dark" data-nav>
+  <a class="nav__brand" href="#top" aria-label={`${site.name}, back to the top`}>{site.name}</a>
+  <nav class="nav__links" aria-label="Sections">
+    <a href="#rates">Rate list</a>
+    <a href="#combos">Combos</a>
+    <a href="#visit">Find us</a>
+  </nav>
+  <a class="nav__call" href={telHref}>
+    <Icon name="phone" />
+    <span class="sr-only">Call </span><span>{site.phone.display}</span>
+  </a>
+</header>

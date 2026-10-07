@@ -1,0 +1,275 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-07T19:56:34Z",
+  "title": "Design System: Wok Aroma",
+  "extensions": {
+    "colorMeta": {
+      "turmeric": {
+        "role": "primary",
+        "displayName": "Turmeric Enamel",
+        "canonical": "oklch(81% 0.166 83)",
+        "tonalRamp": [
+          "#1b0f00",
+          "#372500",
+          "#573e00",
+          "#77580f",
+          "#a37811",
+          "#cf9b1f",
+          "#ffbe22",
+          "#feeccb"
+        ]
+      },
+      "chilli": {
+        "role": "primary",
+        "displayName": "Chilli Enamel",
+        "canonical": "oklch(54% 0.201 29)",
+        "tonalRamp": [
+          "#2c0000",
+          "#530201",
+          "#820000",
+          "#ae160e",
+          "#df3d2f",
+          "#fd7563",
+          "#feb5aa",
+          "#ffe9e5"
+        ]
+      },
+      "shutter-green": {
+        "role": "secondary",
+        "displayName": "Shutter Green",
+        "canonical": "oklch(37% 0.066 171)",
+        "tonalRamp": [
+          "#00170f",
+          "#003125",
+          "#134d3d",
+          "#336a58",
+          "#568d7b",
+          "#7ab29f",
+          "#a0d9c4",
+          "#c3fde8"
+        ]
+      },
+      "chilli-deep": {
+        "role": "tertiary",
+        "displayName": "Deep Chilli",
+        "canonical": "oklch(43% 0.159 29)",
+        "tonalRamp": [
+          "#2d0000",
+          "#540000",
+          "#7e0c08",
+          "#a52b21",
+          "#ce5345",
+          "#f87968",
+          "#fbb7ac",
+          "#fee9e6"
+        ]
+      },
+      "soot": {
+        "role": "neutral",
+        "displayName": "Kitchen Soot",
+        "canonical": "oklch(20% 0.015 42)",
+        "tonalRamp": [
+          "#17100d",
+          "#2f2723",
+          "#4a403c",
+          "#655b57",
+          "#887e7a",
+          "#ada29e",
+          "#d3c8c3",
+          "#f8ece7"
+        ]
+      },
+      "enamel": {
+        "role": "neutral",
+        "displayName": "Milk Enamel",
+        "canonical": "oklch(97% 0.019 91)",
+        "tonalRamp": [
+          "#151108",
+          "#2c291e",
+          "#464237",
+          "#625d52",
+          "#848074",
+          "#a9a497",
+          "#cfcabd",
+          "#f3eee0"
+        ]
+      },
+      "veg": {
+        "role": "semantic",
+        "displayName": "Veg Green",
+        "canonical": "oklch(51% 0.134 149)",
+        "tonalRamp": [
+          "#001803",
+          "#003310",
+          "#045121",
+          "#027130",
+          "#3a9652",
+          "#62bc76",
+          "#88e39a",
+          "#c9fed1"
+        ]
+      },
+      "nonveg": {
+        "role": "semantic",
+        "displayName": "Non-veg Red",
+        "canonical": "oklch(52% 0.202 30)",
+        "tonalRamp": [
+          "#2c0000",
+          "#530200",
+          "#7e0f05",
+          "#ae1607",
+          "#df3c2a",
+          "#fd7561",
+          "#ffb6a9",
+          "#ffe9e5"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Painted lettering",
+        "purpose": "Name, section headings, shop plate. Yatra One, 6rem ceiling."
+      },
+      "board": {
+        "displayName": "Board type",
+        "purpose": "Rate lines, prices, labels, buttons. Teko Variable, uppercase for labels and controls."
+      },
+      "body": {
+        "displayName": "Sentences",
+        "purpose": "Addresses and running text. Hind, 17px, 1.55."
+      }
+    },
+    "shadows": [
+      {
+        "name": "hung-board",
+        "value": "0 16px 22px -14px rgba(0,0,0,0.6)",
+        "purpose": "Soft drop under a board hanging on its chains."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Arrivals and state changes."
+      },
+      {
+        "name": "shutter-lift",
+        "value": "power2.out 0.55s, hold 0.32s, power3.inOut 1.45s",
+        "purpose": "The two-stage preloader lift."
+      },
+      {
+        "name": "lane-scrub",
+        "value": "scrub 0.9, boards travel 1.28× scroll",
+        "purpose": "Pinned horizontal rate list."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "phone",
+        "value": "759px"
+      },
+      {
+        "name": "stacked",
+        "value": "899px"
+      },
+      {
+        "name": "pinned-lane",
+        "value": "900px × 640px, hover:hover, motion allowed"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Call Button",
+      "kind": "button",
+      "refersTo": "button-call",
+      "description": "The primary action: a two-line enamel plate, label over number.",
+      "html": "<a class=\"ds-call\" href=\"#\"><span class=\"ds-call-s\">Call to order</span><span class=\"ds-call-b\">98712 72744</span></a>",
+      "css": ".ds-call{display:inline-flex;flex-direction:column;gap:2px;padding:10px 24px;background:#c82218;color:#fbf6e8;border:3px solid #1b1310;border-radius:8px;text-decoration:none;font-family:'Teko Variable','Teko',sans-serif;text-transform:uppercase;transition:transform .18s,background-color .18s}.ds-call-s{font-size:16px;font-weight:600;letter-spacing:.12em}.ds-call-b{font-size:32px;font-weight:700;letter-spacing:.06em;line-height:1}.ds-call:hover{background:#931710;transform:translateY(-2px)}.ds-call:active{transform:translateY(1px)}.ds-call:focus-visible{outline:3px solid #1b1310;outline-offset:3px}"
+    },
+    {
+      "name": "Ink Button",
+      "kind": "button",
+      "refersTo": "button-ink",
+      "description": "Secondary action on light or yellow grounds.",
+      "html": "<a class=\"ds-ink\" href=\"#\">Directions</a>",
+      "css": ".ds-ink{display:inline-flex;align-items:center;min-height:52px;padding:0 24px;background:#1b1310;color:#f4b400;border:3px solid #1b1310;border-radius:8px;text-decoration:none;font-family:'Teko Variable','Teko',sans-serif;font-size:22px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;transition:transform .18s,background-color .18s}.ds-ink:hover{background:#2c201b;transform:translateY(-2px)}.ds-ink:focus-visible{outline:3px solid #1b1310;outline-offset:3px}"
+    },
+    {
+      "name": "Paper Button",
+      "kind": "button",
+      "refersTo": "button-paper",
+      "description": "Tertiary action; fills turmeric on hover.",
+      "html": "<a class=\"ds-paper\" href=\"#\">Rate list</a>",
+      "css": ".ds-paper{display:inline-flex;align-items:center;min-height:52px;padding:0 24px;background:#fbf6e8;color:#1b1310;border:3px solid #1b1310;border-radius:8px;text-decoration:none;font-family:'Teko Variable','Teko',sans-serif;font-size:22px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;transition:transform .18s,background-color .18s}.ds-paper:hover{background:#f4b400;transform:translateY(-2px)}.ds-paper:focus-visible{outline:3px solid #1b1310;outline-offset:3px}"
+    },
+    {
+      "name": "Diet Filter",
+      "kind": "chip",
+      "refersTo": "filter",
+      "description": "Segmented All / Veg / Non-veg control; dividers are 3px gaps showing the frame, not borders.",
+      "html": "<div class=\"ds-filter\"><button class=\"on\">All</button><button>Veg</button><button>Non-veg</button></div>",
+      "css": ".ds-filter{display:inline-flex;gap:3px;overflow:hidden;background:#fbf6e8;border:3px solid #fbf6e8;border-radius:8px;background-color:#fbf6e8}.ds-filter button{min-height:48px;padding:0 20px;background:#0e4a3a;color:#fbf6e8;border:0;font-family:'Teko Variable','Teko',sans-serif;font-size:21px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:background-color .2s}.ds-filter button:hover{background:#17604b}.ds-filter button.on{background:#f4b400;color:#1b1310}.ds-filter button:focus-visible{outline:3px solid #f4b400;outline-offset:-6px}"
+    },
+    {
+      "name": "Rate Board",
+      "kind": "card",
+      "refersTo": "board",
+      "description": "The signature container: milk-enamel plate, soot frame, painted pinstripe, ribbon heads, dotted price leaders.",
+      "html": "<article class=\"ds-board\"><h3>Noodles</h3><h4 class=\"ds-rib\">Veg</h4><ul><li><span>Hakka Noodles</span><i></i><b>₹203</b></li><li><span>Singapuri Noodles</span><i></i><b>₹227</b></li></ul></article>",
+      "css": ".ds-board{position:relative;width:300px;padding:22px 24px;background:#fbf6e8;color:#1b1310;border:6px solid #1b1310;border-radius:8px;box-shadow:0 16px 22px -14px rgba(0,0,0,.6);rotate:-.6deg}.ds-board::before{content:'';position:absolute;inset:5px;border:2px solid #c78f00;border-radius:3px;pointer-events:none}.ds-board h3{margin:0 0 10px;padding-bottom:4px;font-family:'Yatra One',serif;font-weight:400;font-size:34px;line-height:1.08;text-align:center;color:#c82218;border-bottom:3px solid #1b1310}.ds-rib{margin:0 -3px 8px;padding:3px 18px;background:#167a38;color:#fbf6e8;font-family:'Teko Variable','Teko',sans-serif;font-size:19px;letter-spacing:.1em;text-transform:uppercase;clip-path:polygon(0 0,100% 0,calc(100% - 11px) 50%,100% 100%,0 100%,11px 50%)}.ds-board ul{margin:0;padding:0;list-style:none}.ds-board li{display:flex;align-items:last baseline;gap:8px;font-family:'Teko Variable','Teko',sans-serif;font-size:22px;font-weight:500;line-height:1.12}.ds-board li i{flex:1;margin-bottom:5px;border-bottom:3px dotted rgba(27,19,16,.38)}.ds-board li b{font-weight:700;color:#931710}"
+    },
+    {
+      "name": "Combo Slab",
+      "kind": "custom",
+      "refersTo": "slab",
+      "description": "A pasted poster: enamel plate with a rotated price roundel; slabs stack and settle back under the next.",
+      "html": "<article class=\"ds-slab\"><p class=\"ds-price\">₹239</p><div><h3>Meal combo</h3><p>Veg Fried Rice or Veg Noodles + Veg Manchurian + Cold Drink</p></div></article>",
+      "css": ".ds-slab{display:grid;grid-template-columns:auto 1fr;gap:28px;align-items:center;padding:28px;background:#c82218;color:#fbf6e8;border:6px solid #1b1310;border-radius:14px;rotate:-.9deg}.ds-price{display:grid;place-items:center;width:130px;aspect-ratio:1;margin:0;font-family:'Yatra One',serif;font-size:46px;color:#1b1310;background:#f4b400;border:6px solid #1b1310;border-radius:50%;rotate:-6deg}.ds-slab h3{margin:0 0 8px;font-family:'Yatra One',serif;font-weight:400;font-size:34px;line-height:1.1}.ds-slab p{margin:0;font-family:'Teko Variable','Teko',sans-serif;font-size:26px;font-weight:500;line-height:1.12}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Shutter That Stays Up",
+    "overview": "A hand-painted shopfront at page scale. Enamel sign paint on a lit facade; the menu is a rate list on boards; the one thing that never changes is that the shutter is up.",
+    "keyCharacteristics": [
+      "Enamel paint colours at full commitment, never tints",
+      "Painted lettering (Yatra One) over condensed board type (Teko)",
+      "Boards on chains, posters pasted over one another",
+      "Motion carries real mechanisms: a shutter lifting, a lane of boards, bills layering"
+    ],
+    "rules": [
+      {
+        "name": "The Real Price Rule",
+        "body": "Prices, hours and links come from one config file. Nothing on a board is invented; an unsupplied link is hidden, not faked.",
+        "section": "components"
+      },
+      {
+        "name": "The Enamel Rule",
+        "body": "Colour is a full coat on a whole region (facade, wall, slab), never a tint or a gradient. White is milk enamel (#fbf6e8), black is soot (#1b1310).",
+        "section": "colors"
+      },
+      {
+        "name": "The Mark Rule",
+        "body": "Veg and non-veg are always shape plus colour plus a ribbon label; colour alone never carries the diet.",
+        "section": "components"
+      },
+      {
+        "name": "The Hung Rule",
+        "body": "Boards and signs hang from chains and sit a little off true (±0.9deg). They sway with scroll speed; they never bounce.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do set display lettering in Yatra One at 6rem or below, and board lines and prices in Teko.",
+      "Do keep every interactive target at least 44px tall with a 3px focus ring in the surface's contrast colour.",
+      "Do let content be visible without JavaScript and give every animation a reduced-motion path.",
+      "Do give each section its own full colour field: turmeric, chilli-deep, shutter green, milk enamel, soot."
+    ],
+    "donts": [
+      "Don't use photography stand-ins, gradient text, glows, or hard offset shadows.",
+      "Don't put a kicker or number above a heading.",
+      "Don't use identical cards: boards differ in width and structure, slabs differ in colour and tilt.",
+      "Don't pull the shutter down: the lift is one-way and the footer says why."
+    ]
+  }
+}

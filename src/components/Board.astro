@@ -1,0 +1,45 @@
+---
+// One enamel board on the rate list. Sections are single-diet, so the ribbon
+// (shape + colour + hidden text) carries veg / non-veg for every row beneath it.
+import { rupees } from '../config/menu.js';
+
+const { board, tilt = 0, size = 'md' } = Astro.props;
+const diets = [...new Set(board.sections.map((s) => s.diet))];
+const cols = board.stack ? 1 : board.sections.length;
+const dietLabel = { veg: 'vegetarian', nonveg: 'non-vegetarian' };
+---
+
+<article
+  class={`board board--${size}`}
+  id={`board-${board.id}`}
+  data-board
+  data-diets={diets.join(' ')}
+  style={`--tilt: ${tilt}deg`}
+>
+  <span class="board__chains" aria-hidden="true"></span>
+  <div class="board__sway" data-sway>
+    <h3 class="board__title">{board.title}</h3>
+    <div class="board__body" data-cols={cols}>
+      {
+        board.sections.map((sec) => (
+          <section class="board__sec" data-diet={sec.diet}>
+            <h4 class={`ribbon ribbon--${sec.diet}`}>
+              <span class={`mark mark--${sec.diet}`} aria-hidden="true" />
+              {sec.title}
+              <span class="sr-only"> ({dietLabel[sec.diet]})</span>
+            </h4>
+            <ul class="rows">
+              {sec.items.map((item) => (
+                <li class="row" data-diet={item.diet}>
+                  <span class="row__name">{item.name}</span>
+                  <span class="row__lead" aria-hidden="true" />
+                  <span class="row__price">{rupees(item.price)}</span>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))
+      }
+    </div>
+  </div>
+</article>

@@ -1,0 +1,70 @@
+---
+// The rate list: enamel boards hung on a rail. On desktop the section pins and the
+// boards are carried past like shopfronts down a lane; elsewhere they simply stack.
+import { momos, boards } from '../config/menu.js';
+import Board from './Board.astro';
+import MomoBoard from './MomoBoard.astro';
+
+const order = [momos, ...boards];
+const labels = {
+  momos: 'Momos',
+  starters: 'Starters',
+  noodles: 'Noodles',
+  rice: 'Rice',
+  manchurian: 'Manchurian',
+  soups: 'Soups',
+  bites: 'Bites',
+  drinks: 'Drinks',
+};
+// Hung by hand: each board sits a little off true.
+const tilts = [-0.7, 0.6, -0.5, 0.8, -0.6, 0.5, -0.8, 0.6];
+const sizeOf = (b) => (!b.stack && b.sections && b.sections.length > 1 ? 'lg' : 'md');
+---
+
+<section class="lane" id="rates" aria-labelledby="rates-title" data-lane data-filter="all">
+  <div class="lane__head on-dark">
+    <div class="lane__intro">
+      <h2 id="rates-title">The rate list</h2>
+      <p>Prices in rupees, as on our printed menu.</p>
+    </div>
+    <div class="filter" role="group" aria-label="Show dishes that are">
+      <button type="button" aria-pressed="true" data-set="all">All</button>
+      <button type="button" aria-pressed="false" data-set="veg">
+        <span class="mark" aria-hidden="true"></span>Veg
+      </button>
+      <button type="button" aria-pressed="false" data-set="nonveg">
+        <span class="mark mark--nonveg" aria-hidden="true"></span>Non-veg
+      </button>
+    </div>
+  </div>
+
+  <nav class="lane__ruler on-dark" aria-label="Jump to a board" data-ruler>
+    <div class="lane__ruler-track">
+      {
+        order.map((b, i) => (
+          <a href={`#board-${b.id}`} aria-current={i === 0 ? 'true' : undefined}>
+            {labels[b.id]}
+          </a>
+        ))
+      }
+    </div>
+    <span class="lane__meter" aria-hidden="true"><i data-meter></i></span>
+  </nav>
+
+  <div class="lane__stage">
+    <div class="lane__rail" aria-hidden="true"></div>
+    <div class="lane__viewport">
+      <div class="lane__track" data-track>
+        {
+          order.map((b, i) =>
+            b.id === 'momos' ? (
+              <MomoBoard tilt={tilts[i]} />
+            ) : (
+              <Board board={b} tilt={tilts[i % tilts.length]} size={sizeOf(b)} />
+            ),
+          )
+        }
+      </div>
+    </div>
+  </div>
+</section>

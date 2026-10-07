@@ -1,0 +1,15 @@
+---
+import { site } from '../config/site.js';
+import Icon from './Icon.astro';
+---
+
+<section class="statement on-dark" id="story" aria-labelledby="story-title">
+  <h2 class="sr-only" id="story-title">About {site.name}</h2>
+  <p class="statement__text" data-statement>
+    The wok doesn’t cool and the <em>shutter</em> doesn’t come down. Momos, hakka noodles, fried
+    rice, manchurian and thukpa, cooked over <em>flame</em> at any hour, from {site.address.building}{' '}to your door.
+  </p>
+  <a class="statement__link" href="#rates">
+    Read the rate list <Icon name="down" />
+  </a>
+</section>

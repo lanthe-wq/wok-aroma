@@ -1,0 +1,32 @@
+---
+// The shutter. Covers the viewport until the page is really loaded, then rolls up
+// in two stages (lift, catch, lift) the way a steel shutter does, and stays up.
+// Hidden by default; the inline head script opts a visit in via html.preload*.
+import { site } from '../config/site.js';
+
+const slats = 22;
+---
+
+<div class="shutter" id="shutter" aria-hidden="true" style={`--slats: ${slats}`}>
+  <div class="shutter__sheet" data-sheet>
+    <div class="shutter__slats">
+      {Array.from({ length: slats }, () => <i class="shutter__slat" />)}
+    </div>
+
+    <div class="shutter__paint">
+      <p class="shutter__shop">{site.address.shop}</p>
+      <p class="shutter__hindi" lang="hi">24 घंटे खुला</p>
+
+      <div class="shutter__plate">
+        <p class="shutter__name">{site.name}</p>
+        <p class="shutter__count"><span data-count>0</span><small>%</small></p>
+        <p class="shutter__status" data-status>Lighting the gas</p>
+      </div>
+    </div>
+
+    <div class="shutter__bar"><span class="shutter__handle"></span></div>
+  </div>
+  <div class="shutter__drum"></div>
+</div>
+
+<noscript><style>.shutter{display:none!important}</style></noscript>

@@ -1,0 +1,159 @@
+/* ───────────────────────────────────────────────────────────────────────────
+   Preloader: the shutter.
+   Hidden unless the inline head script opts this visit in (html.preload).
+   ─────────────────────────────────────────────────────────────────────────── */
+
+.shutter {
+  --drum-h: 34px;
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: none;
+  overflow: hidden;
+  pointer-events: auto;
+}
+
+html.preload .shutter {
+  display: block;
+}
+html.preload,
+html.preload body {
+  overflow: hidden;
+}
+
+.shutter__sheet {
+  position: absolute;
+  inset: 0;
+  background: var(--shutter);
+}
+
+/* Corrugated slats: steel catching light on its upper curve */
+.shutter__slats {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-rows: repeat(var(--slats), 1fr);
+}
+.shutter__slat {
+  display: block;
+  background: linear-gradient(
+    180deg,
+    rgb(255 255 255 / 0.16) 0,
+    rgb(255 255 255 / 0) 30%,
+    rgb(0 0 0 / 0) 60%,
+    rgb(0 0 0 / 0.34) 100%
+  );
+  border-bottom: 2px solid var(--shutter-deep);
+}
+
+/* Paint on the shutter: shop number, Hindi line, the progress plate */
+.shutter__paint {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: var(--gutter);
+}
+
+.shutter__shop,
+.shutter__hindi {
+  position: absolute;
+  top: calc(var(--drum-h) + 5vh);
+  margin: 0;
+  font-family: var(--font-display);
+  line-height: 1;
+}
+.shutter__shop {
+  left: var(--gutter);
+  font-size: clamp(2.6rem, 7vw, 5.5rem);
+  color: var(--turmeric);
+  -webkit-text-stroke: 0.07em var(--soot);
+  paint-order: stroke fill;
+}
+.shutter__hindi {
+  right: var(--gutter);
+  font-size: clamp(1.4rem, 3.4vw, 2.6rem);
+  color: var(--enamel);
+}
+
+.shutter__plate {
+  width: min(88vw, 30rem);
+  padding: var(--s-5) var(--s-6);
+  text-align: center;
+  color: var(--enamel);
+  background: var(--chilli);
+  border: 6px solid var(--enamel);
+  outline: 4px solid var(--soot);
+  border-radius: var(--radius);
+}
+.shutter__name {
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 6vw, 3.4rem);
+  line-height: 1;
+}
+.shutter__count {
+  margin: var(--s-3) 0 var(--s-2);
+  font-family: var(--font-board);
+  font-weight: 700;
+  font-size: clamp(5.5rem, 20vw, 9rem);
+  line-height: 0.85;
+  color: var(--turmeric);
+  font-variant-numeric: tabular-nums;
+}
+.shutter__count small {
+  margin-left: 0.06em;
+  font-size: 0.45em;
+}
+.shutter__status {
+  min-height: 1.5em;
+  font-family: var(--font-board);
+  font-weight: 500;
+  font-size: 1.3rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+/* Bottom bar and pull handle: the part you grab to lift a shutter */
+.shutter__bar {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  background: var(--soot);
+}
+.shutter__handle {
+  width: 120px;
+  height: 12px;
+  border-radius: var(--radius);
+  background: var(--turmeric);
+}
+
+/* The roll the shutter winds into */
+.shutter__drum {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: var(--drum-h);
+  z-index: 2;
+  background: linear-gradient(
+    180deg,
+    var(--steel-mid) 0,
+    #2c201b 40%,
+    #1b1310 72%,
+    var(--steel-low) 100%
+  );
+  border-bottom: 3px solid var(--soot);
+}
+
+/* While the shutter is up on a returning visit, keep motion out of the way */
+html[data-preload='preload-lite'] .shutter__handle {
+  display: none;
+}
+
+/* Page chrome waits behind the shutter */
+html.preload .actions {
+  transform: translateY(120%);
+}
+html.preload .nav {
+  transform: translateY(-100%);
+}

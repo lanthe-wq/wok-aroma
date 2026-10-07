@@ -1,0 +1,76 @@
+---
+import { site, telHref } from '../config/site.js';
+import { combos } from '../config/menu.js';
+
+const names = ['Meal combo', 'Momos combo', 'Roll and momos combo', 'Café combo'];
+const tones = ['chilli', 'shutter', 'soot', 'enamel'];
+const tilts = [-0.9, 0.7, -0.5, 0.8];
+---
+
+<section class="combos" id="combos" aria-labelledby="combos-title">
+  <div class="combos__head">
+    <h2 id="combos-title">Combos</h2>
+    <p>Four bundled deals, all vegetarian.</p>
+  </div>
+
+  <div class="combos__stack">
+    {
+      combos.map((c, i) => (
+        <article
+          class={`slab slab--${tones[i]}`}
+          data-slab
+          style={`--tilt: ${tilts[i]}deg; --i: ${i}`}
+        >
+          <div class="slab__shade" aria-hidden="true" data-shade />
+          <p class="slab__price" aria-label={`${c.price} rupees`}>
+            <span class="slab__rs" aria-hidden="true">₹</span>
+            <span aria-hidden="true">{c.price}</span>
+          </p>
+          <div class="slab__body">
+            <h3 class="slab__name">{names[i]}</h3>
+            <ul class="slab__parts">
+              {c.parts.map((p) => <li>{p}</li>)}
+            </ul>
+            <p class="slab__diet">
+              <span class="mark" aria-hidden="true" /> Vegetarian
+            </p>
+          </div>
+          <i class="rivet rivet--a" aria-hidden="true" />
+          <i class="rivet rivet--b" aria-hidden="true" />
+          <i class="rivet rivet--c" aria-hidden="true" />
+          <i class="rivet rivet--d" aria-hidden="true" />
+        </article>
+      ))
+    }
+  </div>
+
+  <div class="deliver on-dark">
+    <div class="deliver__text">
+      <h3>Free home delivery</h3>
+      <p>
+        Up to {site.delivery.freeWithinKm} km from the shop, on orders of ₹{site.delivery.minimumOrder} or more.
+        Also on {site.delivery.platforms.join(' and ')}.
+      </p>
+    </div>
+    <div class="deliver__actions">
+      <a class="btn btn--call" href={telHref}>
+        <span class="btn__small">Order direct</span>
+        <span class="btn__big">{site.phone.display}</span>
+      </a>
+      {
+        site.links.swiggy && (
+          <a class="btn btn--paper" href={site.links.swiggy} target="_blank" rel="noopener">
+            Order on Swiggy
+          </a>
+        )
+      }
+      {
+        site.links.zomato && (
+          <a class="btn btn--paper" href={site.links.zomato} target="_blank" rel="noopener">
+            Order on Zomato
+          </a>
+        )
+      }
+    </div>
+  </div>
+</section>

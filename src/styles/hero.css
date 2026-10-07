@@ -1,0 +1,459 @@
+/* ───────────────────────────────────────────────────────────────────────────
+   Nav · hero shopfront · ticker
+   ─────────────────────────────────────────────────────────────────────────── */
+
+/* ── Nav ───────────────────────────────────────────────────────────────────── */
+
+.nav {
+  position: fixed;
+  z-index: 50;
+  inset: 0 0 auto 0;
+  height: var(--nav-h);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-5);
+  padding-inline: var(--gutter);
+  color: var(--enamel);
+  background: var(--soot);
+  font-family: var(--font-board);
+  font-weight: 600;
+  font-size: 1.2rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: transform 0.5s var(--ease-out);
+}
+.nav a {
+  text-decoration: none;
+}
+
+.nav__brand {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 1.55rem;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--turmeric);
+  opacity: 0;
+  transform: translateY(8px);
+  pointer-events: none;
+  transition:
+    opacity 0.35s var(--ease-out),
+    transform 0.35s var(--ease-out);
+}
+.nav.is-scrolled .nav__brand {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+
+.nav__links {
+  display: flex;
+  gap: var(--s-6);
+  margin-inline: auto var(--s-6);
+}
+.nav__links a {
+  padding-block: 0.25rem;
+  border-bottom: 3px solid transparent;
+  transition: border-color 0.2s var(--ease-out), color 0.2s var(--ease-out);
+}
+.nav__links a:hover,
+.nav__links a[aria-current='true'] {
+  color: var(--turmeric);
+  border-color: var(--turmeric);
+}
+
+.nav__call {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 40px;
+  padding: 0 0.9rem;
+  font-weight: 700;
+  color: var(--enamel);
+  background: var(--chilli);
+  border-radius: var(--radius);
+  transition: background-color 0.2s var(--ease-out);
+}
+.nav__call:hover {
+  background: var(--chilli-deep);
+}
+.nav__call svg {
+  width: 1.1em;
+  height: 1.1em;
+}
+
+/* On phones the bar stays out of the way until the facade has scrolled by */
+@media (max-width: 759px) {
+  .nav {
+    transform: translateY(-100%);
+  }
+  .nav.is-scrolled {
+    transform: none;
+  }
+  .nav__links {
+    display: none;
+  }
+  .nav__brand {
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+  }
+  .nav {
+    justify-content: space-between;
+  }
+}
+
+/* ── Hero: the shopfront ───────────────────────────────────────────────────── */
+
+.hero {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  min-height: 100vh;
+  min-height: 100svh;
+  padding-top: var(--nav-h);
+  color: var(--soot);
+  background: var(--turmeric);
+  overflow: clip;
+}
+
+/* Fascia: the painted signboard above the shop */
+.fascia {
+  position: relative;
+  z-index: 3;
+  padding: var(--s-4) clamp(1rem, 4vw, 3rem) 0;
+}
+
+.fascia__tube {
+  display: block;
+  width: min(62%, 34rem);
+  height: 14px;
+  margin: 0 auto var(--s-3);
+  background: var(--enamel);
+  border: 3px solid var(--soot);
+  border-radius: 8px;
+}
+
+.fascia__board {
+  position: relative;
+  padding: var(--s-5) var(--s-5) var(--s-4);
+  text-align: center;
+  background: var(--chilli);
+  border: 8px solid var(--enamel);
+  outline: 5px solid var(--soot);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+/* painted pinstripe just inside the border */
+.fascia__board::before {
+  content: '';
+  position: absolute;
+  inset: 6px;
+  border: 3px solid var(--turmeric);
+  border-radius: 3px;
+  pointer-events: none;
+}
+
+.fascia__name {
+  position: relative;
+  font-size: var(--step-4);
+  line-height: 1.1;
+  letter-spacing: 0.01em;
+  color: var(--enamel);
+  -webkit-text-stroke: 0.06em var(--soot);
+  paint-order: stroke fill;
+}
+.fascia__name .char {
+  display: inline-block;
+}
+
+.fascia__tagline {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+  max-width: 44rem;
+  margin: var(--s-2) auto 0;
+  font-family: var(--font-board);
+  font-weight: 600;
+  font-size: clamp(1.15rem, 0.9rem + 1.1vw, 1.9rem);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--enamel);
+}
+.fascia__tagline::before,
+.fascia__tagline::after {
+  content: '';
+  flex: 1;
+  height: 3px;
+  background: var(--turmeric);
+}
+
+/* tube-light flicker: a dim layer over the lit board, stepped by JS */
+.fascia__dim {
+  position: absolute;
+  inset: 0;
+  background: var(--soot);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Stage: wok in the doorway, signs hung either side */
+.hero__stage {
+  position: relative;
+  display: grid;
+  /* the wok grows with screen height, so tall monitors don't leave a bare band under it */
+  grid-template-columns: minmax(0, 1fr) minmax(0, clamp(26rem, 60svh, 44rem)) minmax(0, 1fr);
+  align-items: start;
+  gap: var(--s-5);
+  padding-inline: clamp(1rem, 4vw, 3rem);
+}
+
+.hero__art {
+  position: relative;
+  z-index: 4;
+  grid-column: 2;
+  margin-top: clamp(-1.5rem, -1.2vw, -0.5rem);
+}
+
+/* Hung signs */
+.sign {
+  position: relative;
+  z-index: 2;
+  margin-top: 0;
+  transform-origin: 50% 0;
+}
+.sign--rates {
+  grid-column: 1;
+  justify-self: end;
+  rotate: -2deg;
+}
+.sign--open {
+  grid-column: 3;
+  justify-self: start;
+  rotate: 2deg;
+}
+
+.sign__chains {
+  display: block;
+  width: 62%;
+  height: 2.2rem;
+  margin: 0 auto -3px;
+  border-inline: 4px dashed var(--soot);
+}
+
+.sign__plate {
+  min-width: 14.5rem;
+  padding: var(--s-4) var(--s-5) var(--s-4);
+  color: var(--soot);
+  background: var(--enamel);
+  border: 6px solid var(--soot);
+  border-radius: var(--radius);
+}
+.sign__title {
+  font-family: var(--font-display);
+  font-size: 1.9rem;
+  line-height: 1;
+  color: var(--chilli);
+}
+.sign__sub {
+  margin-bottom: var(--s-2);
+  padding-bottom: var(--s-2);
+  font-family: var(--font-board);
+  font-weight: 600;
+  font-size: 1.05rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  border-bottom: 3px solid var(--soot);
+}
+.sign__lines {
+  display: grid;
+  gap: 0.1rem;
+  margin-bottom: var(--s-3);
+  font-family: var(--font-board);
+  font-weight: 500;
+  font-size: 1.35rem;
+  line-height: 1.2;
+}
+.sign__lines li {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--s-4);
+}
+.sign__lines b {
+  font-weight: 700;
+  color: var(--chilli-deep);
+}
+.sign__more {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: var(--font-board);
+  font-weight: 700;
+  font-size: 1.15rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--soot);
+  border-bottom: 3px solid var(--chilli);
+}
+.sign__more svg {
+  width: 1em;
+  height: 1em;
+}
+.sign__more:hover {
+  color: var(--chilli);
+}
+
+.sign--open .sign__plate {
+  min-width: 11rem;
+  text-align: center;
+  color: var(--enamel);
+  background: var(--shutter);
+  border-color: var(--soot);
+}
+.sign__open {
+  font-family: var(--font-display);
+  font-size: 3.4rem;
+  line-height: 0.95;
+  color: var(--turmeric);
+}
+.sign__hours {
+  font-family: var(--font-board);
+  font-weight: 700;
+  font-size: 1.9rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.sign__hours::after {
+  content: '';
+  display: block;
+  height: 3px;
+  margin-top: var(--s-2);
+  background: var(--turmeric);
+}
+.sign__hindi {
+  margin-top: var(--s-2);
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+}
+
+/* Counter: the ledge where the actions sit */
+.hero__counter {
+  position: relative;
+  z-index: 5;
+  display: grid;
+  justify-items: center;
+  gap: var(--s-4);
+  padding: var(--s-5) clamp(1rem, 4vw, 3rem) var(--s-6);
+  text-align: center;
+  background: var(--turmeric-deep);
+  border-top: 6px solid var(--soot);
+}
+.hero__buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--s-4);
+}
+.hero__where {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.15rem var(--s-6);
+  font-family: var(--font-board);
+  font-weight: 500;
+  font-size: 1.35rem;
+  letter-spacing: 0.03em;
+}
+
+/* Phones: wok first, signs side by side beneath it */
+@media (max-width: 899px) {
+  .hero__stage {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--s-4);
+  }
+  .hero__art {
+    grid-column: 1 / -1;
+    justify-self: center;
+    width: min(100%, 30rem);
+  }
+  .sign--rates {
+    grid-column: 1;
+    grid-row: 2;
+    justify-self: stretch;
+  }
+  .sign--open {
+    grid-column: 2;
+    grid-row: 2;
+    justify-self: stretch;
+  }
+  .sign__plate {
+    min-width: 0;
+    padding: var(--s-3) var(--s-3);
+  }
+  .sign__title {
+    font-size: 1.5rem;
+  }
+  .sign__lines {
+    font-size: 1.15rem;
+  }
+  .sign__open {
+    font-size: 2.6rem;
+  }
+  .sign__hours {
+    font-size: 1.5rem;
+  }
+  .hero__buttons {
+    width: 100%;
+  }
+  .hero__buttons .btn {
+    flex: 1 1 100%;
+  }
+  .hero__buttons .btn--call {
+    align-items: center;
+  }
+  .hero__stage {
+    padding-bottom: var(--s-5);
+  }
+}
+
+/* ── Ticker ────────────────────────────────────────────────────────────────── */
+
+.marquee {
+  position: relative;
+  z-index: 6;
+  overflow: hidden;
+  color: var(--turmeric);
+  background: var(--soot);
+  border-block: 5px solid var(--soot);
+}
+.marquee__track {
+  display: flex;
+  width: max-content;
+  padding-block: 0.7rem;
+}
+.marquee__set {
+  display: flex;
+  flex: none;
+}
+.marquee__set li {
+  display: flex;
+  align-items: center;
+  gap: 1.4rem;
+  padding-inline: 1.4rem;
+  font-family: var(--font-board);
+  font-weight: 700;
+  font-size: clamp(1.6rem, 1rem + 1.8vw, 2.4rem);
+  line-height: 1;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.marquee__set svg {
+  flex: none;
+  color: var(--chilli);
+}

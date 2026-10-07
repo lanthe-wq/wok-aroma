@@ -1,0 +1,76 @@
+---
+// Momo prices are a grid (filling × style), so this board is a real table.
+// Two orientations of the same data: wide (styles across) for the pinned desktop lane,
+// tall (styles down) for every stacked layout. CSS shows one; the other is display:none,
+// so assistive tech only ever meets a single table.
+import { momos, rupees } from '../config/menu.js';
+
+const { tilt = 0 } = Astro.props;
+const dietLabel = { veg: 'vegetarian', nonveg: 'non-vegetarian' };
+---
+
+<article
+  class="board board--xl board--momos"
+  id="board-momos"
+  data-board
+  data-diets="veg nonveg"
+  style={`--tilt: ${tilt}deg`}
+>
+  <span class="board__chains" aria-hidden="true"></span>
+  <div class="board__sway" data-sway>
+    <h3 class="board__title">{momos.title}</h3>
+    <div class="board__body">
+      <table class="grid grid--wide">
+        <caption class="sr-only">Momo prices in rupees, by style and filling</caption>
+        <thead>
+          <tr>
+            <td><span class="sr-only">Filling</span></td>
+            {momos.styles.map((s) => <th scope="col">{s}</th>)}
+          </tr>
+        </thead>
+        <tbody>
+          {
+            momos.fillings.map((f) => (
+              <tr class="grid__row" data-diet={f.diet}>
+                <th scope="row">
+                  <span class={`mark mark--${f.diet}`} aria-hidden="true" />
+                  {f.name}
+                  <span class="sr-only"> ({dietLabel[f.diet]})</span>
+                </th>
+                {f.prices.map((p) => <td>{rupees(p)}</td>)}
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+
+      <table class="grid grid--tall">
+        <caption class="sr-only">Momo prices in rupees, by filling and style</caption>
+        <thead>
+          <tr>
+            <td><span class="sr-only">Style</span></td>
+            {
+              momos.fillings.map((f) => (
+                <th scope="col" data-diet={f.diet}>
+                  <span class={`mark mark--${f.diet}`} aria-hidden="true" />
+                  {f.name}
+                  <span class="sr-only"> ({dietLabel[f.diet]})</span>
+                </th>
+              ))
+            }
+          </tr>
+        </thead>
+        <tbody>
+          {
+            momos.styles.map((style, i) => (
+              <tr>
+                <th scope="row">{style}</th>
+                {momos.fillings.map((f) => <td data-diet={f.diet}>{rupees(f.prices[i])}</td>)}
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</article>

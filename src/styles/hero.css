@@ -1,5 +1,5 @@
 /* ───────────────────────────────────────────────────────────────────────────
-   Nav · hero shopfront · ticker
+   Nav · hero (the night kitchen) · ticker
    ─────────────────────────────────────────────────────────────────────────── */
 
 /* ── Nav ───────────────────────────────────────────────────────────────────── */
@@ -104,497 +104,567 @@
   }
 }
 
-/* ── Hero: the shopfront ───────────────────────────────────────────────────── */
+/* ── Hero: the night kitchen ───────────────────────────────────────────────
+   3 a.m., the shutter is up and the wok is the only light on the street.
+   The scene is composed on a 1440 x 848 stage (390 x 782 on phones) and scaled
+   as one piece: --u is one design pixel. Width and height both limit it, so the
+   whole composition always fits; a floor keeps small laptops legible. */
 
 .hero {
+  --u: min(1.5px, calc(100cqw / 1440), max(0.78px, calc((100svh - var(--nav-h)) / 848)));
+  --pt: var(--nav-h); /* room above the stage: the nav, wherever the nav is showing */
+  --cy: calc(var(--pt) + 568 * var(--u)); /* the wok's mouth: where the light comes from */
+  --gy: calc(var(--cy) - 120 * var(--u));
+  --by: calc(var(--cy) + 150 * var(--u));
   position: relative;
   isolation: isolate;
-  display: grid;
-  grid-template-rows: auto 1fr auto;
+  container-type: inline-size;
   min-height: 100vh;
   min-height: 100svh;
-  padding-top: var(--nav-h);
-  color: var(--soot);
-  background: var(--turmeric);
+  padding-top: var(--pt);
+  color: var(--enamel);
+  background: var(--night);
   overflow: clip;
 }
 
-/* Fascia: the painted signboard above the shop */
-.fascia {
-  position: relative;
-  z-index: 3;
-  padding: var(--s-4) clamp(1rem, 4vw, 3rem) 0;
-}
-
-.fascia__tube {
-  position: relative;
-  display: block;
-  width: min(62%, 34rem);
-  height: 14px;
-  margin: 0 auto var(--s-3);
-  background: var(--enamel);
-  border: 3px solid var(--soot);
-  border-radius: 8px;
-}
-/* end caps */
-.fascia__tube::before,
-.fascia__tube::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  width: 12px;
-  height: 22px;
-  translate: 0 -50%;
-  background: var(--soot);
-  border-radius: 3px;
-}
-.fascia__tube::before {
-  left: -13px;
-}
-.fascia__tube::after {
-  right: -13px;
-}
-/* mounting clips gripping the tube */
-.fascia__clip {
-  position: absolute;
-  top: -7px;
-  bottom: -7px;
-  width: 9px;
-  background: var(--soot);
-  border-radius: 2px;
-}
-.fascia__clip:nth-child(1) {
-  left: 16%;
-}
-.fascia__clip:nth-child(2) {
-  left: calc(50% - 4.5px);
-}
-.fascia__clip:nth-child(3) {
-  right: 16%;
-}
-
-.fascia__board {
-  position: relative;
-  padding: var(--s-5) var(--s-5) var(--s-4);
-  text-align: center;
-  background: var(--chilli);
-  border: 8px solid var(--enamel);
-  outline: 5px solid var(--soot);
-  border-radius: var(--radius);
-  overflow: hidden;
-}
-/* painted pinstripe just inside the border; bolts sit in its corners */
-.fascia__board::before {
-  content: '';
-  position: absolute;
-  inset: 6px;
-  border: 3px solid var(--turmeric);
-  border-radius: 3px;
-  pointer-events: none;
-}
-
-.fascia__name {
-  position: relative;
-  font-size: var(--step-4);
-  line-height: 1.1;
-  letter-spacing: 0.01em;
-  color: var(--enamel);
-  -webkit-text-stroke: 0.06em var(--soot);
-  paint-order: stroke fill;
-}
-.fascia__name .char {
-  display: inline-block;
-}
-
-.fascia__tagline {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: var(--s-4);
-  max-width: 44rem;
-  margin: var(--s-2) auto 0;
-  font-family: var(--font-board);
-  font-weight: 600;
-  font-size: clamp(1.15rem, 0.9rem + 1.1vw, 1.9rem);
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--enamel);
-}
-.fascia__tagline::before,
-.fascia__tagline::after {
-  content: '';
-  flex: 1;
-  height: 3px;
-  background: var(--turmeric);
-}
-
-/* tube-light flicker: a dim layer over the lit board, stepped by JS */
-.fascia__dim {
+.hero__wall {
   position: absolute;
   inset: 0;
-  background: var(--soot);
-  opacity: 0;
-  pointer-events: none;
+  background: radial-gradient(
+    ellipse calc(980 * var(--u)) calc(660 * var(--u)) at 50% var(--cy),
+    var(--fire-wash) 0%,
+    var(--night-wall) 42%,
+    var(--night) 78%
+  );
+}
+/* corrugated slats, visible only where the fire reaches them */
+.hero__wall::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(180deg, rgb(255 214 150 / 0.1) 0 3px, transparent 3px 30px);
+  -webkit-mask-image: radial-gradient(
+    ellipse calc(900 * var(--u)) calc(640 * var(--u)) at 50% calc(var(--cy) - 20 * var(--u)),
+    #000 0%,
+    transparent 70%
+  );
+  mask-image: radial-gradient(
+    ellipse calc(900 * var(--u)) calc(640 * var(--u)) at 50% calc(var(--cy) - 20 * var(--u)),
+    #000 0%,
+    transparent 70%
+  );
 }
 
-/* Stage: wok in the doorway, signs hung either side */
+/* the rolled-up shutter, across the top */
+.hero__drum {
+  position: absolute;
+  inset: var(--pt) 0 auto 0;
+  height: max(14px, calc(20 * var(--u)));
+  background: linear-gradient(180deg, var(--steel-high) 0%, #54423a 30%, var(--soot-2) 70%, #120c0a 100%);
+  border-bottom: 3px solid var(--night);
+}
+
+/* the fire throws light on the wall. The wrapper fades in on reveal; the inner layer flickers. */
+.hero__glow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+.hero__glow i {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(
+      ellipse calc(600 * var(--u)) calc(480 * var(--u)) at 50% var(--gy),
+      rgb(255 160 50 / 0.62) 0%,
+      rgb(232 52 28 / 0.3) 46%,
+      transparent 72%
+    ),
+    radial-gradient(
+      ellipse calc(260 * var(--u)) calc(90 * var(--u)) at 50% var(--by),
+      rgb(91 155 255 / 0.38) 0%,
+      transparent 70%
+    );
+  animation: hero-light 2.6s linear infinite;
+}
+@keyframes hero-light {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  8% {
+    opacity: 0.86;
+  }
+  14% {
+    opacity: 1;
+  }
+  33% {
+    opacity: 0.92;
+  }
+  41% {
+    opacity: 0.98;
+  }
+  67% {
+    opacity: 0.88;
+  }
+  78% {
+    opacity: 1;
+  }
+}
+
 .hero__stage {
   position: relative;
-  display: grid;
-  /* the wok grows with screen height, so tall monitors don't leave a bare band under it */
-  grid-template-columns: minmax(0, 1fr) minmax(0, clamp(26rem, 60svh, 44rem)) minmax(0, 1fr);
-  align-items: start;
-  gap: var(--s-5);
-  padding-inline: clamp(1rem, 4vw, 3rem);
-}
-
-.hero__art {
-  position: relative;
-  z-index: 4;
-  grid-column: 2;
-  margin-top: clamp(-1.5rem, -1.2vw, -0.5rem);
-}
-
-/* Hung signs */
-.sign {
-  position: relative;
   z-index: 2;
-  margin-top: 0;
-  transform-origin: 50% 0;
-}
-.sign--rates {
-  grid-column: 1;
-  justify-self: end;
-  rotate: -2deg;
-}
-.sign--open {
-  grid-column: 3;
-  justify-self: start;
-  rotate: 2deg;
+  width: calc(1440 * var(--u));
+  height: calc(848 * var(--u));
+  margin-inline: auto;
 }
 
-.sign__chains {
-  display: flex;
-  justify-content: space-between;
-  width: 62%;
-  height: 2.2rem;
-  margin: 0 auto -3px;
-}
-.chain {
-  display: block;
-  height: 100%;
-  width: auto;
-  overflow: visible;
-}
-
-.sign__plate {
-  position: relative;
-  min-width: 14.5rem;
-  padding: var(--s-4) var(--s-5) var(--s-4);
-  color: var(--soot);
-  background: var(--enamel);
-  border: 6px solid var(--soot);
-  border-radius: var(--radius);
-}
-/* painted pinstripe just inside the frame */
-.sign__plate::before {
-  content: '';
+/* Sparks: positions in % of the stage, sizes and travel in design pixels */
+.sparks {
   position: absolute;
-  inset: 3px;
-  border: 2px solid var(--turmeric-deep);
-  border-radius: 3px;
+  inset: 0;
   pointer-events: none;
 }
-
-/* Studs (plate rivets; the combo posters have their own .rivet): a steel head with a soot rim and a flat catch-light */
-.studs {
-  display: contents;
+.sparks--front {
+  z-index: 4;
 }
-.stud {
+.spark {
   position: absolute;
-  width: 8px;
-  height: 8px;
-  background: var(--steel-high);
-  border: 2px solid var(--soot);
+  bottom: var(--sy);
+  left: var(--sx);
+  width: calc(var(--ss) * var(--u));
+  height: calc(var(--ss) * var(--u));
   border-radius: 50%;
+  background: var(--flame-yellow);
+  opacity: 0;
+  animation: spark var(--sd) ease-out var(--sl) infinite;
 }
-.stud::after {
+.sparks--front .spark {
+  --so: 0.8;
+  filter: blur(calc(1.6 * var(--u)));
+}
+@keyframes spark {
+  0% {
+    transform: translate(0, 0) scale(0.6);
+    opacity: 0;
+  }
+  12% {
+    opacity: var(--so, 0.95);
+  }
+  100% {
+    transform: translate(calc(var(--sdx) * var(--u)), calc(var(--sdy) * var(--u))) scale(0.2);
+    opacity: 0;
+  }
+}
+
+/* Neon: the name and the tagline are tube light */
+.hero__tag {
+  position: absolute;
+  inset: calc(36 * var(--u)) 0 auto 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: calc(22 * var(--u));
+  font-family: var(--font-board);
+  font-weight: 600;
+  font-size: max(15px, calc(30 * var(--u)));
+  line-height: 1;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: #ffe9c2;
+  text-shadow:
+    0 0 3px #fff,
+    0 0 12px rgb(255 122 26 / 0.9),
+    0 0 28px rgb(232 52 28 / 0.7);
+}
+.hero__tag::before,
+.hero__tag::after {
+  content: '';
+  width: calc(120 * var(--u));
+  height: max(2px, calc(3 * var(--u)));
+  background: #ffe9c2;
+  border-radius: 2px;
+  box-shadow:
+    0 0 6px #fff,
+    0 0 16px rgb(255 122 26 / 0.9);
+}
+
+.hero__name {
+  position: absolute;
+  inset: calc(68 * var(--u)) 0 auto 0;
+  text-align: center;
+  font-size: calc(190 * var(--u));
+  line-height: 1;
+  white-space: nowrap;
+  color: var(--neon-cream);
+  text-shadow:
+    0 0 calc(4 * var(--u)) #fff6dc,
+    0 0 calc(18 * var(--u)) var(--flame-yellow),
+    0 0 calc(48 * var(--u)) var(--flame-orange),
+    0 0 calc(120 * var(--u)) rgb(232 52 28 / 0.9);
+  animation: hero-neon 7s linear infinite;
+}
+/* a tube that is on, with the odd stutter. Held still while the page lights up. */
+.hero.is-igniting .hero__name {
+  animation: none;
+}
+@keyframes hero-neon {
+  0%,
+  92%,
+  100% {
+    opacity: 1;
+  }
+  93% {
+    opacity: 0.82;
+  }
+  94% {
+    opacity: 1;
+  }
+  95.5% {
+    opacity: 0.7;
+  }
+  97% {
+    opacity: 1;
+  }
+}
+
+/* Wok: stands in front of the lettering, so flame and tossed food cross it */
+.hero__art {
+  position: absolute;
+  z-index: 3;
+  left: calc(300 * var(--u));
+  top: calc(188 * var(--u));
+  width: calc(840 * var(--u));
+}
+
+/* Signs */
+.hero__open {
+  position: absolute;
+  z-index: 5;
+  left: calc(62 * var(--u));
+  top: calc(240 * var(--u));
+  width: calc(262 * var(--u));
+  padding: calc(16 * var(--u)) calc(16 * var(--u)) calc(14 * var(--u));
+  text-align: center;
+  rotate: -3deg;
+  border: calc(5 * var(--u)) solid var(--flame-yellow);
+  border-radius: calc(22 * var(--u));
+  background: rgb(20 8 5 / 0.55);
+  box-shadow:
+    0 0 6px var(--flame-yellow),
+    0 0 26px rgb(255 122 26 / 0.65),
+    inset 0 0 14px rgb(255 198 31 / 0.35);
+}
+.hero__open-word {
+  font-family: var(--font-display);
+  font-size: calc(76 * var(--u));
+  line-height: 0.95;
+  color: var(--neon-red);
+  text-shadow:
+    0 0 4px #ffd0c8,
+    0 0 16px #ff3a28,
+    0 0 40px var(--flame-red);
+}
+.hero__open-hours {
+  margin-top: calc(4 * var(--u));
+  font-family: var(--font-board);
+  font-weight: 700;
+  font-size: max(22px, calc(42 * var(--u)));
+  line-height: 1;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #ffe9c2;
+  text-shadow:
+    0 0 3px #fff,
+    0 0 14px rgb(255 122 26 / 0.9);
+}
+.hero__open-hindi {
+  margin-top: calc(6 * var(--u));
+  font-family: var(--font-display);
+  font-size: max(16px, calc(26 * var(--u)));
+  line-height: 1.2;
+  color: var(--flame-yellow);
+  text-shadow: 0 0 10px rgb(255 160 40 / 0.8);
+}
+
+.hero__rates {
+  position: absolute;
+  z-index: 5;
+  right: calc(54 * var(--u));
+  top: calc(278 * var(--u));
+  width: calc(280 * var(--u));
+  padding: calc(18 * var(--u)) calc(22 * var(--u)) calc(16 * var(--u));
+  rotate: 2.5deg;
+  color: var(--soot);
+  background: var(--enamel);
+  border: calc(6 * var(--u)) solid var(--soot);
+  border-radius: var(--radius);
+  box-shadow:
+    0 0 0 2px rgb(255 150 50 / 0.3),
+    0 22px 40px -14px rgb(0 0 0 / 0.8);
+}
+/* lit from below by the fire */
+.hero__rates::after {
   content: '';
   position: absolute;
-  top: 0;
-  left: 1px;
-  width: 2px;
-  height: 2px;
-  background: var(--enamel);
-  border-radius: 50%;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(0deg, rgb(255 122 26 / 0.34), transparent 60%);
 }
-.stud--tl {
-  top: 9px;
-  left: 9px;
-}
-.stud--tr {
-  top: 9px;
-  right: 9px;
-}
-.stud--bl {
-  bottom: 9px;
-  left: 9px;
-}
-.stud--br {
-  bottom: 9px;
-  right: 9px;
-}
-/* the fascia carries bigger bolts, set clear of the pinstripe */
-.studs--bolt .stud {
-  width: 14px;
-  height: 14px;
-  border-width: 3px;
-}
-.studs--bolt .stud::after {
-  top: 1px;
-  left: 2px;
-  width: 3px;
-  height: 3px;
-}
-.studs--bolt .stud--tl {
-  top: 18px;
-  left: 18px;
-}
-.studs--bolt .stud--tr {
-  top: 18px;
-  right: 18px;
-}
-.studs--bolt .stud--bl {
-  bottom: 18px;
-  left: 18px;
-}
-.studs--bolt .stud--br {
-  bottom: 18px;
-  right: 18px;
-}
-.sign__title {
+.hero__rates-title {
   font-family: var(--font-display);
-  font-size: 1.9rem;
+  font-size: calc(36 * var(--u));
   line-height: 1;
   color: var(--chilli);
 }
-.sign__sub {
-  margin-bottom: var(--s-2);
-  padding-bottom: var(--s-2);
+.hero__rates-sub {
+  margin-bottom: calc(8 * var(--u));
+  padding-bottom: calc(6 * var(--u));
   font-family: var(--font-board);
   font-weight: 600;
-  font-size: 1.05rem;
+  font-size: max(14px, calc(18 * var(--u)));
+  line-height: 1.2;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--ink-soft);
   border-bottom: 3px solid var(--soot);
 }
-.sign__lines {
+.hero__rates-lines {
   display: grid;
-  gap: 0.1rem;
-  margin-bottom: var(--s-3);
+  gap: 2px;
+  margin-bottom: calc(10 * var(--u));
   font-family: var(--font-board);
   font-weight: 500;
-  font-size: 1.35rem;
+  font-size: max(17px, calc(25 * var(--u)));
   line-height: 1.2;
 }
-.sign__lines li {
+.hero__rates-lines li {
   display: flex;
   justify-content: space-between;
-  gap: var(--s-4);
 }
-.sign__lines b {
+.hero__rates-lines b {
   font-weight: 700;
   color: var(--chilli-deep);
+  font-variant-numeric: tabular-nums;
 }
-.sign__more {
+.hero__rates-more {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
   font-family: var(--font-board);
   font-weight: 700;
-  font-size: 1.15rem;
+  font-size: max(15px, calc(19 * var(--u)));
+  line-height: 1.2;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   text-decoration: none;
   color: var(--soot);
   border-bottom: 3px solid var(--chilli);
 }
-.sign__more svg {
+.hero__rates-more svg {
   width: 1em;
   height: 1em;
 }
-.sign__more:hover {
+.hero__rates-more:hover {
   color: var(--chilli);
 }
 
-.sign--open .sign__plate {
-  min-width: 11rem;
-  text-align: center;
-  color: var(--enamel);
-  background: var(--shutter);
-  border-color: var(--soot);
-}
-.sign__open {
-  font-family: var(--font-display);
-  font-size: 3.4rem;
-  line-height: 0.95;
-  color: var(--turmeric);
-}
-.sign__hours {
-  font-family: var(--font-board);
-  font-weight: 700;
-  font-size: 1.9rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-.sign__sunmoon {
-  display: block;
-  width: 100%;
-  max-width: 8.5rem;
-  height: auto;
-  margin: var(--s-1) auto 0;
-}
-.sign__hindi {
-  margin-top: var(--s-2);
-  font-family: var(--font-display);
-  font-size: 1.3rem;
-}
-
-/* Counter: the ledge where the actions sit */
-.hero__counter {
-  position: relative;
+/* Actions and address sit on the dark wall at the foot of the stage */
+.hero__actions {
+  position: absolute;
   z-index: 5;
+  left: calc(62 * var(--u));
+  bottom: calc(56 * var(--u));
   display: grid;
-  justify-items: center;
-  gap: var(--s-4);
-  padding: var(--s-5) clamp(1rem, 4vw, 3rem) var(--s-6);
-  text-align: center;
-  background: var(--turmeric-deep);
-  border-top: 6px solid var(--soot);
+  gap: 12px;
+  justify-items: start;
 }
-.hero__buttons {
+.hero__actions-row {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
-  gap: var(--s-4);
+  gap: 12px;
+}
+/* narrower than the full design, the two quiet buttons stack so they stay clear of the stove */
+@container (max-width: 1400px) {
+  .hero__actions-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+.hero .btn--ink {
+  --btn-bg: var(--turmeric);
+  --btn-fg: var(--soot);
+}
+.hero .btn--ink:hover {
+  --btn-bg: #ffd24a;
 }
 .hero__where {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 0.15rem var(--s-6);
+  position: absolute;
+  z-index: 5;
+  right: calc(54 * var(--u));
+  bottom: calc(56 * var(--u));
+  width: calc(300 * var(--u));
+  text-align: right;
   font-family: var(--font-board);
   font-weight: 500;
-  font-size: 1.35rem;
+  font-size: max(15px, calc(22 * var(--u)));
+  line-height: 1.25;
   letter-spacing: 0.03em;
+  color: #e9d9bd;
+}
+.hero__where span {
+  display: block;
 }
 
-/* Phones: wok first, signs side by side beneath it */
+/* Phones: a taller composition on a 390-wide stage; the fixed action bar carries Call and Directions */
 @media (max-width: 899px) {
+  .hero {
+    --u: min(1.3px, calc(100cqw / 390));
+    --cy: calc(var(--pt) + 430 * var(--u));
+    --gy: var(--cy);
+    --by: calc(var(--pt) + 590 * var(--u));
+  }
   .hero__stage {
-    grid-template-columns: 1fr 1fr;
-    gap: var(--s-4);
+    width: calc(390 * var(--u));
+    height: calc(782 * var(--u));
+  }
+  .hero__wall {
+    background: radial-gradient(
+      ellipse calc(560 * var(--u)) calc(520 * var(--u)) at 50% var(--cy),
+      var(--fire-wash) 0%,
+      var(--night-wall) 42%,
+      var(--night) 78%
+    );
+  }
+  .hero__drum {
+    height: max(12px, calc(16 * var(--u)));
+  }
+  .hero__glow i {
+    background:
+      radial-gradient(
+        ellipse calc(380 * var(--u)) calc(360 * var(--u)) at 50% var(--gy),
+        rgb(255 160 50 / 0.62) 0%,
+        rgb(232 52 28 / 0.3) 46%,
+        transparent 72%
+      ),
+      radial-gradient(
+        ellipse calc(180 * var(--u)) calc(60 * var(--u)) at 50% var(--by),
+        rgb(91 155 255 / 0.38) 0%,
+        transparent 70%
+      );
+  }
+  .hero__tag {
+    inset: calc(34 * var(--u)) 0 auto 0;
+    gap: calc(10 * var(--u));
+    font-size: max(12px, calc(17 * var(--u)));
+    letter-spacing: 0.2em;
+  }
+  .hero__tag::before,
+  .hero__tag::after {
+    width: calc(26 * var(--u));
+  }
+  .hero__name {
+    inset: calc(60 * var(--u)) 0 auto 0;
+    font-size: calc(104 * var(--u));
+    line-height: 0.92;
+  }
+  .hero__name span {
+    display: block;
   }
   .hero__art {
-    grid-column: 1 / -1;
-    justify-self: center;
-    width: min(100%, 30rem);
+    left: calc(-34 * var(--u));
+    top: calc(236 * var(--u));
+    width: calc(458 * var(--u));
   }
-  .sign--rates {
-    grid-column: 1;
-    grid-row: 2;
-    justify-self: stretch;
+  .hero__open {
+    left: calc(14 * var(--u));
+    top: calc(586 * var(--u));
+    width: calc(168 * var(--u));
+    padding: calc(10 * var(--u)) calc(8 * var(--u)) calc(8 * var(--u));
+    border-width: calc(4 * var(--u));
+    border-radius: calc(16 * var(--u));
   }
-  .sign--open {
-    grid-column: 2;
-    grid-row: 2;
-    justify-self: stretch;
+  .hero__open-word {
+    font-size: calc(50 * var(--u));
   }
-  .sign__plate {
-    min-width: 0;
-    padding: calc(var(--s-3) + 4px);
+  .hero__open-hours {
+    font-size: max(16px, calc(26 * var(--u)));
+    letter-spacing: 0.06em;
   }
-  /* smaller studs, tucked closer to the corners, so they clear the text */
-  .stud {
-    width: 6px;
-    height: 6px;
-    border-width: 1.5px;
+  .hero__open-hindi {
+    font-size: max(13px, calc(17 * var(--u)));
   }
-  .stud::after {
+  .hero__rates {
+    right: calc(14 * var(--u));
+    top: calc(584 * var(--u));
+    width: calc(176 * var(--u));
+    padding: calc(8 * var(--u)) calc(12 * var(--u)) calc(6 * var(--u));
+    border-width: calc(5 * var(--u));
+  }
+  .hero__rates-title {
+    font-size: calc(25 * var(--u));
+  }
+  .hero__rates-sub {
+    margin-bottom: calc(4 * var(--u));
+    font-size: max(11px, calc(14 * var(--u)));
+  }
+  .hero__rates-lines {
+    margin-bottom: calc(4 * var(--u));
+    font-size: max(15px, calc(19 * var(--u)));
+  }
+  .hero__rates-more,
+  .hero__actions,
+  .hero__where {
     display: none;
-  }
-  .stud--tl,
-  .stud--tr {
-    top: 6px;
-  }
-  .stud--bl,
-  .stud--br {
-    bottom: 6px;
-  }
-  .stud--tl,
-  .stud--bl {
-    left: 6px;
-  }
-  .stud--tr,
-  .stud--br {
-    right: 6px;
-  }
-  .studs--bolt .stud {
-    width: 11px;
-    height: 11px;
-    border-width: 2.5px;
-  }
-  .studs--bolt .stud--tl,
-  .studs--bolt .stud--tr {
-    top: 14px;
-  }
-  .studs--bolt .stud--bl,
-  .studs--bolt .stud--br {
-    bottom: 14px;
-  }
-  .studs--bolt .stud--tl,
-  .studs--bolt .stud--bl {
-    left: 14px;
-  }
-  .studs--bolt .stud--tr,
-  .studs--bolt .stud--br {
-    right: 14px;
-  }
-  .sign__title {
-    font-size: 1.5rem;
-  }
-  .sign__lines {
-    font-size: 1.15rem;
-  }
-  .sign__open {
-    font-size: 2.6rem;
-  }
-  .sign__hours {
-    font-size: 1.5rem;
-  }
-  .hero__buttons {
-    width: 100%;
-  }
-  .hero__buttons .btn {
-    flex: 1 1 100%;
-  }
-  .hero__buttons .btn--call {
-    align-items: center;
-  }
-  .hero__stage {
-    padding-bottom: var(--s-5);
   }
 }
 
-/* ── Ticker ────────────────────────────────────────────────────────────────── */
+/* Phones hide the nav until the facade scrolls past, so the stage starts at the very top */
+@media (max-width: 759px) {
+  .hero {
+    --pt: 0px;
+  }
+}
+
+/* Tablets in portrait: the phone composition, plus the actions the phone action bar would carry */
+@media (min-width: 760px) and (max-width: 899px) {
+  .hero__stage {
+    height: calc(970 * var(--u));
+  }
+  .hero__actions {
+    display: grid;
+    left: 50%;
+    width: max-content;
+    bottom: calc(28 * var(--u));
+    translate: -50% 0;
+    justify-items: center;
+  }
+  .hero__actions-row {
+    flex-direction: row;
+    justify-content: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__glow i,
+  .hero__name {
+    animation: none;
+  }
+  .sparks {
+    display: none;
+  }
+}
+
+/* ── Ticker: a lit light-box, the one bright strip in the night ────────────── */
 
 .marquee {
   position: relative;
   z-index: 6;
   overflow: hidden;
-  color: var(--turmeric);
-  background: var(--soot);
+  color: var(--soot);
+  background: var(--turmeric);
   border-block: 5px solid var(--soot);
 }
 .marquee__track {

@@ -1,9 +1,9 @@
-// Hero: the post-shutter reveal (tube light, painted name, flame and embers, hung signs),
-// the idle loops (tossed ingredients), and a gentle scroll parallax.
+// Hero: the post-shutter reveal (the neon name flickers on, the fire catches, the signs drop in),
+// the idle loops (tossed ingredients), and a gentle scroll parallax. Sparks and the fire's
+// light are CSS, so the scene is lit without any of this.
 
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { SplitText } from 'gsap/SplitText';
 
 const q = (s, r = document) => r.querySelector(s);
 const qa = (s, r = document) => [...r.querySelectorAll(s)];
@@ -12,16 +12,16 @@ export function initHero({ reduced, preloading, mode }) {
   const hero = q('.hero');
   if (!hero) return { reveal() {} };
 
-  const tube = q('.fascia__tube');
-  const dim = q('[data-dim]');
+  const name = q('[data-name]');
   const tagline = q('[data-tagline]');
+  const glow = q('[data-glow]');
+  const sparks = qa('[data-sparks]');
   const signs = qa('[data-hang]');
   const flames = qa('.flame');
   const embers = q('.wok__embers');
   const toss = qa('.toss__inner');
-  const actions = qa('[data-hero-actions] .btn, [data-hero-actions] .hero__where');
+  const actions = qa('[data-hero-actions] .btn, .hero__where');
 
-  const TUBE_DIM = '#8f867c';
   const animated = !reduced;
 
   // ── Idle loops: tossed ingredients ────────────────────────────────────────
@@ -53,30 +53,28 @@ export function initHero({ reduced, preloading, mode }) {
       onToggle: (self) => loops.forEach((l) => (self.isActive && !preloading ? l.play() : l.pause())),
     });
 
-    // Depth: the wok drifts up faster than the fascia as the shopfront leaves
+    // Depth: the wok rises faster than the lettering as the shopfront leaves
     gsap.to('[data-hero-art]', {
-      yPercent: -9,
+      yPercent: -8,
       ease: 'none',
       scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: true },
     });
-    gsap.to('.fascia', {
-      yPercent: 10,
+    gsap.to(name, {
+      yPercent: 12,
       ease: 'none',
       scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: true },
     });
   }
 
   // ── Starting state, set while the shutter still covers everything ────────
-  let split = null;
   if (animated && preloading) {
-    split = SplitText.create('[data-name]', { type: 'chars', charsClass: 'char', aria: 'auto' });
-    gsap.set(split.chars, { yPercent: 70, opacity: 0 });
-    gsap.set(tagline, { clipPath: 'inset(0 100% 0 0)' });
-    gsap.set(dim, { opacity: 0.62 });
-    gsap.set(tube, { backgroundColor: TUBE_DIM });
+    hero.classList.add('is-igniting');
+    gsap.set([name, tagline], { opacity: 0 });
+    gsap.set(glow, { opacity: 0 });
+    gsap.set(sparks, { opacity: 0 });
     gsap.set(flames, { scaleY: 0, transformOrigin: '50% 100%' });
     gsap.set(embers, { opacity: 0 });
-    gsap.set(signs, { rotation: (i) => (i === 0 ? -10 : 10), y: -16, opacity: 0, transformOrigin: '50% 0' });
+    gsap.set(signs, { y: -18, opacity: 0 });
     gsap.set(actions, { y: 26, opacity: 0 });
     gsap.set(toss, { opacity: 0 });
   }
@@ -88,33 +86,35 @@ export function initHero({ reduced, preloading, mode }) {
     const tl = gsap.timeline({
       defaults: { ease: 'expo.out' },
       onComplete: () => {
+        hero.classList.remove('is-igniting');
         loops.forEach((l) => l.play());
         ScrollTrigger.refresh();
       },
     });
     if (mode === 'preload-quick') tl.timeScale(1.5);
 
-    // Tube-light flicker: the board comes on in stuttering steps
+    // Tube light: the lettering comes on in stuttering steps, then holds
     const steps = [
       [0.0, 0.0],
-      [0.07, 0.55],
-      [0.13, 0.0],
-      [0.24, 0.5],
-      [0.29, 0.0],
-      [0.43, 0.32],
-      [0.5, 0.0],
+      [0.07, 0.6],
+      [0.13, 0.04],
+      [0.24, 0.78],
+      [0.29, 0.1],
+      [0.43, 0.92],
+      [0.5, 0.2],
+      [0.62, 1],
     ];
     steps.forEach(([t, o]) => {
-      tl.set(dim, { opacity: o }, t);
-      tl.set(tube, { backgroundColor: o > 0.2 ? TUBE_DIM : '#fbf6e8' }, t);
+      tl.set(name, { opacity: o }, t);
+      tl.set(tagline, { opacity: o }, t + 0.12);
     });
 
-    tl.to(split.chars, { yPercent: 0, opacity: 1, duration: 0.95, stagger: 0.06 }, 0.2)
-      .to(tagline, { clipPath: 'inset(0 0% 0 0)', duration: 0.85, ease: 'power3.inOut' }, 0.6)
+    tl.to(glow, { opacity: 1, duration: 1.5, ease: 'power2.out' }, 0.3)
       .to(flames, { scaleY: 1, duration: 1.05, stagger: 0.08 }, 0.4)
       .to(embers, { opacity: 1, duration: 0.6, ease: 'power1.out' }, 1.1)
+      .to(sparks, { opacity: 1, duration: 1.2, ease: 'power1.out' }, 1.0)
       .to(toss, { opacity: 1, duration: 0.5, stagger: 0.04, ease: 'power1.out' }, 1.0)
-      .to(signs, { rotation: 0, y: 0, opacity: 1, duration: 1.3, stagger: 0.14 }, 0.55)
+      .to(signs, { y: 0, opacity: 1, duration: 1.1, stagger: 0.14 }, 0.7)
       .to(actions, { y: 0, opacity: 1, duration: 0.8, stagger: 0.08 }, 0.9);
   }
 

@@ -128,7 +128,7 @@
     "typographyMeta": {
       "display": {
         "displayName": "Painted lettering",
-        "purpose": "Name, section headings, shop plate. Yatra One, 6rem ceiling."
+        "purpose": "Section headings, shop plate. Yatra One, 6rem ceiling. The hero name is the one exception, sized with the hero stage."
       },
       "board": {
         "displayName": "Board type",
@@ -142,8 +142,8 @@
     "shadows": [
       {
         "name": "hung-board",
-        "value": "0 16px 22px -14px rgba(0,0,0,0.6)",
-        "purpose": "Soft drop under a board hanging on its chains."
+        "value": "0 22px 30px -14px rgba(0,0,0,0.85)",
+        "purpose": "Soft drop under a board hanging on its chains against a dark wall."
       }
     ],
     "motion": [
@@ -230,9 +230,10 @@
   ],
   "narrative": {
     "northStar": "The Shutter That Stays Up",
-    "overview": "A hand-painted shopfront at page scale. Enamel sign paint on a lit facade; the menu is a rate list on boards; the one thing that never changes is that the shutter is up.",
+    "overview": "A hand-painted shopfront at page scale, after dark. The wok is the only light on the street; enamel boards carry the rate list; the one thing that never changes is that the shutter is up.",
     "keyCharacteristics": [
-      "Enamel paint colours at full commitment, never tints",
+      "Enamel paint colours at full commitment, never tints; warm-black night walls",
+      "Light has a source: the wok's fire and the tube-light signs, nothing else glows",
       "Painted lettering (Yatra One) over condensed board type (Teko)",
       "Boards on chains, posters pasted over one another",
       "Motion carries real mechanisms: a shutter lifting, a lane of boards, bills layering"
@@ -245,7 +246,7 @@
       },
       {
         "name": "The Enamel Rule",
-        "body": "Colour is a full coat on a whole region (facade, wall, slab), never a tint or a gradient. White is milk enamel (#fbf6e8), black is soot (#1b1310).",
+        "body": "Colour is a full coat on a whole region (night wall, ticker, board, slab), never a tint, and no gradients on text or plates. Gradients are allowed only as steel shading and as firelight washing a dark wall. White is milk enamel (#fbf6e8), black is soot (#1b1310).",
         "section": "colors"
       },
       {
@@ -254,19 +255,29 @@
         "section": "components"
       },
       {
+        "name": "The Fire Light Rule",
+        "body": "Light needs a source: the wok's fire, a tube-light sign or lettering, a rail. Enamel plates may be lit from below. No glowing buttons, cards or icons.",
+        "section": "colors"
+      },
+      {
+        "name": "The One Flicker Rule",
+        "body": "One thing flickers at a time: the hero name, at irregular intervals. Everything stops under reduced motion.",
+        "section": "colors"
+      },
+      {
         "name": "The Hung Rule",
         "body": "Boards and signs hang from chains and sit a little off true (±0.9deg). They sway with scroll speed; they never bounce.",
         "section": "elevation"
       }
     ],
     "dos": [
-      "Do set display lettering in Yatra One at 6rem or below, and board lines and prices in Teko.",
+      "Do set display lettering in Yatra One at 6rem or below (the hero name is the one exception), and board lines and prices in Teko.",
       "Do keep every interactive target at least 44px tall with a 3px focus ring in the surface's contrast colour.",
       "Do let content be visible without JavaScript and give every animation a reduced-motion path.",
-      "Do give each section its own full colour field: turmeric, chilli-deep, shutter green, milk enamel, soot."
+      "Do give each section its own wall: the night kitchen, the turmeric ticker, night green for the rate list, a lit enamel facts board on night."
     ],
     "donts": [
-      "Don't use photography stand-ins, gradient text, glows, or hard offset shadows.",
+      "Don't use photography stand-ins, gradient text, or hard offset shadows. Don't glow anything that is not lit.",
       "Don't put a kicker or number above a heading.",
       "Don't use identical cards: boards differ in width and structure, slabs differ in colour and tilt.",
       "Don't pull the shutter down: the lift is one-way and the footer says why."

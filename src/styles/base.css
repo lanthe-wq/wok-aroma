@@ -24,11 +24,27 @@
   --steel-low: #382b25;
   --shutter-hover: #17604b;
 
-  /* Flame is its own set: used only on the wok art */
+  /* Flame is its own set: the wok art, and the light the wok throws on the page after dark */
   --flame-red: #e8341c;
   --flame-orange: #ff7a1a;
   --flame-yellow: #ffc61f;
   --gas-blue: #5b9bff;
+
+  /* Night: the page is the shopfront after dark. Walls are warm black, lit by fire and tube light. */
+  --night: #0d0807;
+  --night-wall: #28120a;
+  --night-green: #06261e;
+  --fire-wash: #4d200f;
+  --neon-cream: #fff3d4;
+  --neon-red: #ff6a55;
+  /* the corrugated shutter, showing faintly on every dark wall */
+  --slats: repeating-linear-gradient(180deg, rgb(255 214 150 / 0.04) 0 3px, transparent 3px 30px);
+  /* neon lettering: a cream tube with a warm halo. Sized in em so it scales with the type. */
+  --neon:
+    0 0 0.03em #fff6dc,
+    0 0 0.14em var(--flame-yellow),
+    0 0 0.4em var(--flame-orange),
+    0 0 0.9em rgb(232 52 28 / 0.7);
 
   /* Diet marks: shape carries meaning, colour confirms it */
   --veg: #167a38;

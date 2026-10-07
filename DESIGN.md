@@ -192,7 +192,7 @@ Depth is physical, not atmospheric. Boards and signs hang: they carry one soft d
 
 ## Shapes
 
-Painted plates: soot frames of 6–8px, an inner turmeric or enamel pinstripe, 8px corners (14px on posters). Ribbons are flag-ended banners (six-point clip, never more). Price roundels are circles. Rivets sit in poster corners. The veg mark is a rounded square with a centred dot. Dividers are dotted leaders or gaps, never single-side accent borders.
+Painted plates: soot frames of 6–8px, an inner turmeric or enamel pinstripe, 8px corners (14px on posters). Ribbons are flag-ended banners (six-point clip, never more). Price roundels are circles. Rivets sit in poster corners; the hero's hung signs and fascia carry steel studs in theirs, the signs hang on soot chain links, and the tube light sits in end caps and clips. The veg mark is a rounded square with a centred dot. Dividers are dotted leaders or gaps, never single-side accent borders.
 
 ## Components
 

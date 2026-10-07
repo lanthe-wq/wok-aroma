@@ -1,6 +1,8 @@
 ---
-// Flat vector emblem: a wok erupting in flame, tossed ingredients, steam.
-// Geometry only (no shading, no perspective). Every shape is specified here.
+// Flat vector emblem: a hammered iron wok heaped with noodles and vegetables,
+// erupting in flame over a cast-iron gas burner, with tossed ingredients and steam.
+// Geometry only (no gradients, glows or perspective): depth comes from stacked
+// flat bands of enamel colour, the way a signwriter would paint it.
 // Animated by CSS (flame flicker, steam) and GSAP (ignite, toss loops).
 
 const flame = (x, base, w, h, lean = 0) =>
@@ -14,11 +16,33 @@ const tongues = [
   [406, 58, 174, 32, 1.05, 0.4],
   [172, 44, 112, -28, 0.85, 0.1],
   [470, 44, 120, 30, 0.9, 0.55],
+  [114, 28, 70, -22, 0.8, 0.3],
+  [528, 28, 74, 24, 0.85, 0.45],
 ];
 const base = 238;
 
-// Jets under the wok: the blue base of a gas burner
-const jets = Array.from({ length: 9 }, (_, i) => 206 + i * 27);
+// Embers thrown off the flame: [x, y, r, flicker delay]
+const embers = [
+  [214, 70, 3.5, 0],
+  [262, 26, 3, 0.6],
+  [372, 18, 3.5, 0.3],
+  [430, 58, 3, 0.9],
+  [158, 92, 2.5, 1.2],
+  [496, 84, 3, 0.45],
+  [330, 6, 2.5, 1.5],
+];
+
+// Hammer dimples beaten into the iron bowl: [cx, cy, rx]
+const dimples = [
+  [168, 322, 15], [226, 350, 15], [292, 368, 15], [360, 372, 15],
+  [424, 356, 15], [482, 324, 15], [128, 288, 13], [196, 300, 14],
+  [262, 322, 15], [330, 336, 15], [398, 330, 15], [458, 296, 14],
+  [514, 276, 13], [152, 258, 12], [232, 272, 14], [310, 286, 14],
+  [388, 284, 14], [466, 262, 13], [284, 392, 12], [352, 396, 12],
+];
+
+// Jets under the wok: the blue ring of a gas burner
+const jets = Array.from({ length: 11 }, (_, i) => 190 + i * 26);
 
 // Tossed ingredients: [kind, x, y]
 const toss = [
@@ -33,13 +57,23 @@ const toss = [
   ['momo', 526, 66],
   ['noodle', 232, 40],
   ['noodle', 410, 134],
+  ['carrot', 176, 74],
+  ['carrot', 468, 170],
+  ['pepper', 252, 112],
+  ['pepper', 398, 78],
+  ['leaf', 306, 60],
+  ['leaf', 78, 142],
+  ['leaf', 556, 118],
   ['sesame', 160, 130],
   ['sesame', 244, 150],
   ['sesame', 380, 30],
   ['sesame', 430, 188],
   ['sesame', 478, 112],
   ['sesame', 300, 28],
+  ['sesame', 340, 168],
+  ['sesame', 206, 168],
 ];
+
 ---
 
 <svg
@@ -49,12 +83,14 @@ const toss = [
   aria-hidden="true"
   focusable="false"
 >
-  <!-- Steam: aroma rising off the rim, left and right of the flame -->
+  <!-- Steam: aroma rising off the rim, three curls a side -->
   <g class="wok__steam" fill="none" stroke="#fbf6e8" stroke-width="9" stroke-linecap="round">
     <path class="steam" style="--sd: 0s" d="M118 196c-20-26 20-46 0-74s20-48 0-76" />
     <path class="steam" style="--sd: 0.9s" d="M82 184c-16-22 16-40 0-62s16-40 0-62" />
+    <path class="steam steam--thin" style="--sd: 1.8s" d="M148 178c-12-18 12-32 0-50s12-32 0-50" />
     <path class="steam" style="--sd: 0.4s" d="M522 196c20-26-20-46 0-74s-20-48 0-76" />
     <path class="steam" style="--sd: 1.3s" d="M560 184c16-22-16-40 0-62s-16-40 0-62" />
+    <path class="steam steam--thin" style="--sd: 2.2s" d="M492 178c12-18-12-32 0-50s-12-32 0-50" />
   </g>
 
   <!-- Flame erupting from the wok mouth (behind the front lip) -->
@@ -73,54 +109,278 @@ const toss = [
             fill="var(--flame-yellow)"
             d={flame(x, base, w * 0.42, h * 0.46, lean * 0.45)}
           />
+          {w > 40 && (
+            <path
+              class="flame__shape"
+              fill="#fff3c4"
+              d={flame(x, base, w * 0.18, h * 0.24, lean * 0.2)}
+            />
+          )}
         </g>
       ))
     }
   </g>
 
-  <!-- Wok interior and heaped food -->
-  <ellipse cx="320" cy="232" rx="252" ry="36" fill="#0e0a08" />
-  <path d="M96 238C130 172 230 152 320 158C410 152 510 172 544 238Z" fill="#b45a14" />
-  <g fill="none" stroke="#e08a2b" stroke-width="7" stroke-linecap="round">
-    <path d="M128 222C168 192 226 186 268 198" />
-    <path d="M300 186C346 176 404 184 452 204" />
-    <path d="M176 232C230 214 300 214 360 222" />
-    <path d="M400 226C440 218 486 218 520 230" />
-  </g>
-  <g fill="none" stroke="#2e8b3e" stroke-width="5">
-    <circle cx="210" cy="206" r="8" />
-    <circle cx="352" cy="192" r="8" />
-    <circle cx="470" cy="214" r="8" />
-    <circle cx="150" cy="232" r="7" />
-  </g>
-  <g fill="none" stroke="var(--chilli)" stroke-width="7" stroke-linecap="round">
-    <path d="M250 214q10-6 20 2" />
-    <path d="M420 200q10-6 20 2" />
+  <!-- Embers thrown off the flame -->
+  <g class="wok__embers" fill="var(--flame-yellow)">
+    {
+      embers.map(([x, y, r, d]) => (
+        <circle class="ember" style={`--ed: ${d}s`} cx={x} cy={y} r={r} />
+      ))
+    }
   </g>
 
-  <!-- Wok body: front lip, bowl, highlight, handles -->
+  <!-- Wok interior: dark cavity, then the heaped food -->
+  <ellipse cx="320" cy="232" rx="252" ry="36" fill="#0e0a08" />
+  <ellipse cx="320" cy="234" rx="236" ry="28" fill="#1b1310" />
+
+  <g class="wok__food">
+    <!-- the heap: a dark sauce base, then noodle bands from shadow to light -->
+    <path d="M96 238C130 172 230 152 320 158C410 152 510 172 544 238Z" fill="#8a3f0e" />
+    <path d="M118 238C146 184 232 166 320 172C408 166 494 184 522 238Z" fill="#b45a14" />
+
+    <!-- wavy noodle strands crossing the heap -->
+    <g fill="none" stroke-linecap="round">
+      <g stroke="#7a360b" stroke-width="6">
+        <path d="M122 232c20-10 36 8 56-2s34-14 52-2 30 8 50-2" />
+        <path d="M330 228c18-8 32 8 52-2s34-12 52-2 36 6 60-2" />
+      </g>
+      <g stroke="#e08a2b" stroke-width="7">
+        <path d="M128 222C168 192 226 186 268 198" />
+        <path d="M300 186C346 176 404 184 452 204" />
+        <path d="M176 232C230 214 300 214 360 222" />
+        <path d="M400 226C440 218 486 218 520 230" />
+      </g>
+      <g stroke="#f0b04a" stroke-width="4.5">
+        <path d="M146 214C180 194 224 190 256 198" />
+        <path d="M312 184c32-6 74-2 112 14" />
+        <path d="M204 222c34-10 78-12 118-6" />
+        <path d="M232 178c18-8 44-10 62-6" />
+        <path d="M356 176c18-4 40-2 58 6" />
+      </g>
+      <g stroke="#e08a2b" stroke-width="4">
+        <path d="M188 206c12-14 30-18 44-14s18-6 34-4" />
+        <path d="M414 212c14-6 28-6 46 2" />
+        <path d="M250 232c14-8 30-6 44 0" />
+      </g>
+    </g>
+
+    <!-- bell-pepper strips: green and red slabs with a light edge -->
+    <g stroke-linejoin="round">
+      <path d="M236 196l26-6 6 12-26 6Z" fill="#2e8b3e" stroke="#1d5a28" stroke-width="2" />
+      <path d="M240 197l22-5" stroke="#6fc57e" stroke-width="2.5" stroke-linecap="round" />
+      <path d="M382 180l26 4-4 12-26-4Z" fill="#2e8b3e" stroke="#1d5a28" stroke-width="2" />
+      <path d="M386 182l22 3" stroke="#6fc57e" stroke-width="2.5" stroke-linecap="round" />
+      <path d="M440 198l24 8-6 11-24-8Z" fill="var(--chilli)" stroke="#7a110b" stroke-width="2" />
+      <path d="M444 200l20 7" stroke="#ee6a5c" stroke-width="2.5" stroke-linecap="round" />
+      <path d="M152 214l24 4-3 11-24-4Z" fill="var(--chilli)" stroke="#7a110b" stroke-width="2" />
+      <path d="M156 216l20 3" stroke="#ee6a5c" stroke-width="2.5" stroke-linecap="round" />
+    </g>
+
+    <!-- carrot coins -->
+    <g stroke="#a8480a" stroke-width="2">
+      <ellipse cx="300" cy="206" rx="11" ry="7" fill="#ff8a1f" />
+      <ellipse cx="168" cy="196" rx="10" ry="6" fill="#ff8a1f" />
+      <ellipse cx="496" cy="218" rx="10" ry="6" fill="#ff8a1f" />
+      <ellipse cx="404" cy="220" rx="9" ry="6" fill="#ff8a1f" />
+    </g>
+    <g fill="#ffc474">
+      <ellipse cx="300" cy="206" rx="4" ry="2.4" />
+      <ellipse cx="168" cy="196" rx="3.6" ry="2.2" />
+      <ellipse cx="496" cy="218" rx="3.6" ry="2.2" />
+      <ellipse cx="404" cy="220" rx="3.2" ry="2.2" />
+    </g>
+
+    <!-- spring-onion rings: cut ends with a pale core -->
+    <g fill="none" stroke="#2e8b3e" stroke-width="5">
+      <circle cx="210" cy="206" r="8" />
+      <circle cx="352" cy="192" r="8" />
+      <circle cx="470" cy="214" r="8" />
+      <circle cx="150" cy="232" r="7" />
+      <circle cx="274" cy="224" r="7" />
+      <circle cx="516" cy="232" r="6" />
+    </g>
+    <g fill="#c8ec9a">
+      <circle cx="210" cy="206" r="3" />
+      <circle cx="352" cy="192" r="3" />
+      <circle cx="470" cy="214" r="3" />
+      <circle cx="150" cy="232" r="2.6" />
+      <circle cx="274" cy="224" r="2.6" />
+      <circle cx="516" cy="232" r="2.2" />
+    </g>
+
+    <!-- red chilli slices and seeds -->
+    <g fill="none" stroke="var(--chilli)" stroke-width="7" stroke-linecap="round">
+      <path d="M250 214q10-6 20 2" />
+      <path d="M420 200q10-6 20 2" />
+      <path d="M322 226q10-6 20 2" />
+      <path d="M190 228q10-6 18 0" />
+    </g>
+
+    <!-- a momo half-buried in the heap, pleated -->
+    <g stroke="#1b1310" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
+      <path d="M356 220a30 21 0 0 1 60 0Z" fill="#fbf6e8" />
+      <path d="M366 220l4-12M376 220l3-15M386 220v-16M396 220l-3-15M406 220l-4-12" fill="none" stroke-width="2.4" />
+    </g>
+
+    <!-- toasted sesame and glossy sauce glints on top -->
+    <g fill="#fbf6e8">
+      <ellipse cx="236" cy="188" rx="4" ry="2.4" />
+      <ellipse cx="324" cy="176" rx="4" ry="2.4" />
+      <ellipse cx="428" cy="188" rx="4" ry="2.4" />
+      <ellipse cx="190" cy="214" rx="4" ry="2.4" />
+      <ellipse cx="484" cy="204" rx="4" ry="2.4" />
+      <ellipse cx="270" cy="212" rx="4" ry="2.4" />
+    </g>
+    <g fill="none" stroke="#ffd9a0" stroke-width="3" stroke-linecap="round">
+      <path d="M186 192c14-10 30-14 46-14" />
+      <path d="M404 176c14 2 28 8 40 18" />
+    </g>
+  </g>
+
+  <!-- Gas burner (drawn behind the bowl): support arms, crown, blue jets, tray, stove slab -->
+  <!-- cast-iron support arms cradling the bowl (their tips tuck behind it) -->
+  <g stroke="#1b1310" stroke-width="3" stroke-linejoin="round">
+    <path d="M122 488L160 488L200 390L178 358Z" fill="#382b25" />
+    <path d="M518 488L480 488L440 390L462 358Z" fill="#382b25" />
+  </g>
+  <g fill="none" stroke="#54423a" stroke-width="3" stroke-linecap="round">
+    <path d="M138 482L180 396" />
+    <path d="M502 482L460 396" />
+  </g>
+  <!-- burner crown: the ring the flames rise from -->
+  <path d="M170 444L186 430H454L470 444Z" fill="#54423a" />
+  <path d="M186 430H454" fill="none" stroke="#6d5c54" stroke-width="3" stroke-linecap="round" />
+  <path d="M176 440H464" fill="none" stroke="#382b25" stroke-width="3" stroke-linecap="round" />
+
+  <g class="wok__jets">
+    {
+      jets.map((x, i) => (
+        <g class="jet" style={`--jd: ${0.5 + (i % 3) * 0.12}s; --jl: ${(i % 4) * 0.07}s`}>
+          <path fill="var(--gas-blue)" d={flame(x, 442, 9, i % 2 ? 26 : 32, 0)} />
+          <path fill="#b9d6ff" d={flame(x, 442, 5.5, i % 2 ? 16 : 20, 0)} />
+          <path fill="#e3f0ff" d={flame(x, 442, 3, 9, 0)} />
+        </g>
+      ))
+    }
+  </g>
+
+  <!-- burner head: dished tray with a ring of port holes -->
+  <path d="M146 486L494 486L454 440L186 440Z" fill="#2c201b" />
+  <path d="M164 484L476 484L444 446L196 446Z" fill="#382b25" />
+  <path d="M150 484L490 484L486 480L154 480Z" fill="#43332b" />
+  <g fill="#1b1310">
+    {
+      Array.from({ length: 13 }, (_, i) => (
+        <circle cx={206 + i * 19} cy="460" r="3.2" />
+      ))
+    }
+    {
+      Array.from({ length: 11 }, (_, i) => (
+        <circle cx={216 + i * 21} cy="474" r="3" />
+      ))
+    }
+  </g>
+  <!-- bolts holding the plate -->
+  <g fill="#6d5c54">
+    <circle cx="178" cy="470" r="2.6" />
+    <circle cx="462" cy="470" r="2.6" />
+  </g>
+
+  <!-- stove top slab, front face with a control knob and vents -->
+  <rect x="104" y="486" width="432" height="22" rx="6" fill="#1b1310" />
+  <rect x="104" y="486" width="432" height="5" rx="2.5" fill="#43332b" />
+  <g fill="#382b25">
+    <rect x="132" y="496" width="46" height="6" rx="3" />
+    <rect x="462" y="496" width="46" height="6" rx="3" />
+  </g>
+  <!-- control knob: outer ring, cap, indicator notch -->
+  <circle cx="320" cy="497" r="9" fill="#382b25" />
+  <circle cx="320" cy="497" r="6" fill="var(--chilli)" />
+  <path d="M320 491v5" stroke="var(--enamel)" stroke-width="2" stroke-linecap="round" fill="none" />
+  <!-- slab legs -->
+  <rect x="124" y="508" width="26" height="12" rx="3" fill="#1b1310" />
+  <rect x="490" y="508" width="26" height="12" rx="3" fill="#1b1310" />
+
+  <!-- Wok body: iron bowl in flat bands, rim, hammered dimples, rivets, handles -->
   <path
     d="M68 232A252 36 0 0 0 572 232C556 342 436 412 320 412C204 412 84 342 68 232Z"
     fill="#1d1512"
   />
+  <!-- lower-bowl shadow band: a crescent of near-black along the base -->
+  <path
+    d="M120 318C160 380 236 408 320 408C404 408 480 380 520 318C494 372 416 398 320 398C224 398 146 372 120 318Z"
+    fill="#120c0a"
+  />
+  <!-- seasoned-patina bands near the rim -->
+  <path
+    d="M76 250A246 32 0 0 0 564 250L561 262A250 34 0 0 1 79 262Z"
+    fill="#2c201b"
+  />
+  <!-- hammered dimples: each a dark pit with a light lower lip -->
+  <g class="wok__hammer">
+    {
+      dimples.map(([cx, cy, rx]) => (
+        <g>
+          <ellipse cx={cx} cy={cy} rx={rx} ry={rx * 0.52} fill="#130d0b" />
+          <path
+            d={`M${cx - rx + 3} ${cy + 1}a${rx - 3} ${(rx - 3) * 0.5} 0 0 0 ${(rx - 3) * 2} 0`}
+            fill="none"
+            stroke="#4a3a32"
+            stroke-width="2"
+            stroke-linecap="round"
+          />
+        </g>
+      ))
+    }
+  </g>
+  <!-- long bowl highlight and a second shorter glint -->
   <path
     d="M104 292C142 352 212 384 272 394"
     fill="none"
-    stroke="#43332b"
+    stroke="#54423a"
     stroke-width="7"
     stroke-linecap="round"
   />
   <path
-    d="M68 232A252 36 0 0 0 572 232"
+    d="M128 328C152 358 186 376 214 384"
     fill="none"
-    stroke="#54423a"
-    stroke-width="9"
+    stroke="#6d5c54"
+    stroke-width="3.5"
     stroke-linecap="round"
   />
+  <path d="M512 306c-10 22-28 42-52 56" fill="none" stroke="#382b25" stroke-width="6" stroke-linecap="round" />
+
+  <!-- rolled rim: outer lip, inner edge, bright top line -->
+  <path d="M68 232A252 36 0 0 0 572 232" fill="none" stroke="#54423a" stroke-width="9" stroke-linecap="round" />
+  <path d="M82 234A238 30 0 0 0 558 234" fill="none" stroke="#2c201b" stroke-width="4" stroke-linecap="round" />
+  <path d="M92 240A228 26 0 0 0 548 240" fill="none" stroke="#6d5c54" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="64 18" />
+
+  <!-- left handle: turned wooden grip, brass ferrule, iron collar and rivets -->
   <g class="wok__handle">
-    <rect x="-24" y="204" width="106" height="22" rx="11" transform="rotate(16 70 232)" fill="#8a4b24" />
-    <rect x="58" y="222" width="26" height="20" rx="4" transform="rotate(16 70 232)" fill="#54423a" />
+    <g transform="rotate(16 70 232)">
+      <rect x="-24" y="204" width="106" height="22" rx="11" fill="#8a4b24" />
+      <!-- grip highlight, grain lines and turned rings -->
+      <rect x="-18" y="208" width="84" height="5" rx="2.5" fill="#b8723a" />
+      <path d="M-8 219h30M26 219h24M8 214h14M40 214h16" fill="none" stroke="#6a3718" stroke-width="2" stroke-linecap="round" />
+      <path d="M12 204v22M30 204v22" fill="none" stroke="#5c2e12" stroke-width="3" />
+      <!-- end cap and hang hole -->
+      <rect x="-24" y="204" width="8" height="22" rx="4" fill="#5c2e12" />
+      <circle cx="-14" cy="215" r="3.4" fill="#1b1310" />
+      <!-- ferrule where wood meets iron -->
+      <rect x="62" y="205" width="14" height="20" rx="2" fill="#c78f00" />
+      <rect x="64" y="207" width="4" height="16" rx="1.5" fill="#f4b400" />
+      <!-- iron collar -->
+      <rect x="58" y="222" width="26" height="20" rx="4" fill="#54423a" />
+      <rect x="60" y="224" width="22" height="4" rx="2" fill="#6d5c54" />
+      <circle cx="66" cy="234" r="2.6" fill="#1b1310" />
+      <circle cx="77" cy="234" r="2.6" fill="#1b1310" />
+      <circle cx="66" cy="233.4" r="1" fill="#8a7a72" />
+      <circle cx="77" cy="233.4" r="1" fill="#8a7a72" />
+    </g>
   </g>
+
+  <!-- right helper handle: iron loop with a riveted foot -->
   <path
     d="M570 224q44-10 48 12q2 22-46 14"
     fill="none"
@@ -128,20 +388,10 @@ const toss = [
     stroke-width="9"
     stroke-linecap="round"
   />
-
-  <!-- Gas burner: blue jets, ring, stove top -->
-  <g class="wok__jets">
-    {
-      jets.map((x, i) => (
-        <g class="jet" style={`--jd: ${0.5 + (i % 3) * 0.12}s; --jl: ${(i % 4) * 0.07}s`}>
-          <path fill="var(--gas-blue)" d={flame(x, 442, 9, 30, 0)} />
-          <path fill="#e3f0ff" d={flame(x, 442, 4, 14, 0)} />
-        </g>
-      ))
-    }
-  </g>
-  <path d="M146 486L494 486L454 440L186 440Z" fill="#2c201b" />
-  <rect x="104" y="486" width="432" height="22" rx="6" fill="#1b1310" />
+  <path d="M578 220q36-6 40 10" fill="none" stroke="#43332b" stroke-width="2.5" stroke-linecap="round" />
+  <rect x="556" y="222" width="22" height="30" rx="5" fill="#2c201b" />
+  <circle cx="567" cy="231" r="2.8" fill="#6d5c54" />
+  <circle cx="567" cy="244" r="2.8" fill="#6d5c54" />
 
   <!-- Tossed ingredients (their loops are driven by GSAP) -->
   <g class="wok__toss">
@@ -150,19 +400,48 @@ const toss = [
         <g class="toss" data-toss data-y={y} data-kind={kind} transform={`translate(${x} ${y})`}>
           <g class="toss__inner">
             {kind === 'scallion' && (
-              <circle r="9" fill="none" stroke="#2e8b3e" stroke-width="5" />
+              <g>
+                <circle r="9" fill="none" stroke="#2e8b3e" stroke-width="5" />
+                <circle r="3.2" fill="#c8ec9a" />
+              </g>
             )}
             {kind === 'chilli' && (
-              <path d="M-11 4q10-12 22-2" fill="none" stroke="var(--chilli)" stroke-width="8" stroke-linecap="round" />
+              <g>
+                <path d="M-11 4q10-12 22-2" fill="none" stroke="var(--chilli)" stroke-width="8" stroke-linecap="round" />
+                <path d="M-9 1q9-8 18-2" fill="none" stroke="#ee6a5c" stroke-width="2" stroke-linecap="round" />
+                <path d="M12 1l4-3" stroke="#2e8b3e" stroke-width="3" stroke-linecap="round" fill="none" />
+              </g>
             )}
             {kind === 'momo' && (
               <g>
                 <path d="M-20 8a20 15 0 0 1 40 0Z" fill="#fbf6e8" stroke="#1b1310" stroke-width="3" stroke-linejoin="round" />
                 <path d="M-10 8l3-9M0 8v-11M10 8l-3-9" stroke="#1b1310" stroke-width="2.5" stroke-linecap="round" fill="none" />
+                <path d="M-14 3a16 11 0 0 1 8-6" stroke="#e8dec4" stroke-width="2.5" stroke-linecap="round" fill="none" />
               </g>
             )}
             {kind === 'noodle' && (
-              <path d="M-16 0c8-14 16 14 32 0" fill="none" stroke="#e08a2b" stroke-width="7" stroke-linecap="round" />
+              <g fill="none" stroke-linecap="round">
+                <path d="M-16 0c8-14 16 14 32 0" stroke="#e08a2b" stroke-width="7" />
+                <path d="M-14 -2c7-10 14 10 28 0" stroke="#f0b04a" stroke-width="2.5" />
+              </g>
+            )}
+            {kind === 'carrot' && (
+              <g stroke="#a8480a" stroke-width="2">
+                <ellipse rx="9" ry="6" fill="#ff8a1f" />
+                <ellipse rx="3.4" ry="2.2" fill="#ffc474" stroke="none" />
+              </g>
+            )}
+            {kind === 'pepper' && (
+              <g stroke-linejoin="round">
+                <path d="M-11 -3l20-3 3 9-20 3Z" fill="#2e8b3e" stroke="#1d5a28" stroke-width="2" />
+                <path d="M-8 -3l16-2" stroke="#6fc57e" stroke-width="2" stroke-linecap="round" />
+              </g>
+            )}
+            {kind === 'leaf' && (
+              <g stroke-linejoin="round" stroke-linecap="round">
+                <path d="M-12 4C-8-8 6-12 13-6C10 6-4 10-12 4Z" fill="#3f9d4d" stroke="#1d5a28" stroke-width="2" />
+                <path d="M-9 3C-3-1 4-3 10-5" fill="none" stroke="#a6dc9c" stroke-width="2" />
+              </g>
             )}
             {kind === 'sesame' && <ellipse rx="5" ry="3" fill="#fbf6e8" stroke="#1b1310" stroke-width="1.5" />}
           </g>
@@ -195,6 +474,14 @@ const toss = [
     animation:
       steam-flow 3.6s linear var(--sd, 0s) infinite,
       steam-fade 3.6s ease-in-out var(--sd, 0s) infinite;
+  }
+  .steam--thin {
+    stroke-width: 6;
+  }
+  .ember {
+    transform-box: fill-box;
+    transform-origin: 50% 50%;
+    animation: ember 2.4s ease-out var(--ed, 0s) infinite;
   }
   @keyframes flicker {
     0%,
@@ -231,6 +518,19 @@ const toss = [
       opacity: 0.75;
     }
   }
+  @keyframes ember {
+    0% {
+      transform: translateY(14px) scale(0.5);
+      opacity: 0;
+    }
+    25% {
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(-26px) scale(0.9);
+      opacity: 0;
+    }
+  }
 
   @media (prefers-reduced-motion: reduce) {
     .flame__shape,
@@ -240,6 +540,9 @@ const toss = [
     }
     .steam {
       opacity: 0.45;
+    }
+    .wok__embers {
+      display: none;
     }
   }
 </style>

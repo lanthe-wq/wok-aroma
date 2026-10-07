@@ -3,8 +3,6 @@ import { site, telHref } from '../config/site.js';
 import { momos, byId, fromPrice, rupees, combos } from '../config/menu.js';
 import WokArt from './WokArt.astro';
 import Icon from './Icon.astro';
-import Chain from './Chain.astro';
-import Studs from './Studs.astro';
 
 // "From" prices are derived from the menu, so they can never drift from it.
 const fromLines = [
@@ -13,84 +11,95 @@ const fromLines = [
   ['Fried rice', fromPrice(byId.rice)],
   ['Combos', Math.min(...combos.map((c) => c.price))],
 ];
+
+// The name is lit as two words so it can stack on a phone.
+const [first, ...rest] = site.name.split(' ');
+
+// Sparks thrown off the flame. Deterministic, so every build is identical and the
+// page needs no JavaScript to light up. Positions are % of the stage; sizes and
+// distances are in design pixels and scale with the stage.
+const rnd = (n) => {
+  const x = Math.sin(n * 9301 + 49297) * 233280;
+  return x - Math.floor(x);
+};
+const f = (v) => v.toFixed(2);
+const sparks = (count, seed, front) =>
+  Array.from({ length: count }, (_, i) => {
+    const k = seed + i;
+    return [
+      `--sx:${f(28 + rnd(k + 3) * 44)}%`,
+      `--sy:${f(34 + rnd(k + 4) * (front ? 14 : 18))}%`,
+      `--ss:${f(front ? 9 + rnd(k + 1) * 8 : 3 + rnd(k + 2) * 4)}`,
+      `--sd:${f((front ? 3.2 : 4) + rnd(k + 5) * 3)}s`,
+      `--sl:-${f(rnd(k + 6) * 6)}s`,
+      `--sdx:${f((rnd(k + 7) - 0.5) * (front ? 90 : 60))}`,
+      `--sdy:${f(-(front ? 200 : 140) - rnd(k + 8) * 220)}`,
+    ].join(';');
+  });
+const back = sparks(22, 0, false);
+const front = sparks(6, 100, true);
 ---
 
 <section class="hero" id="top" aria-labelledby="hero-title">
-  <div class="fascia" data-fascia>
-    <span class="fascia__tube" aria-hidden="true">
-      <i class="fascia__clip"></i>
-      <i class="fascia__clip"></i>
-      <i class="fascia__clip"></i>
-    </span>
-    <div class="fascia__board">
-      <Studs bolt />
-      <h1 class="fascia__name" id="hero-title" data-name>{site.name}</h1>
-      <p class="fascia__tagline" data-tagline>{site.tagline}</p>
-      <span class="fascia__dim" aria-hidden="true" data-dim></span>
-    </div>
-  </div>
+  <div class="hero__wall" aria-hidden="true"></div>
+  <div class="hero__drum" aria-hidden="true"></div>
+  <div class="hero__glow" aria-hidden="true" data-glow><i></i></div>
 
   <div class="hero__stage">
-    <aside class="sign sign--rates" data-hang aria-label="A few starting prices">
-      <span class="sign__chains" aria-hidden="true"><Chain /><Chain /></span>
-      <div class="sign__plate">
-        <Studs />
-        <p class="sign__title">Rate list</p>
-        <p class="sign__sub">Starting at</p>
-        <ul class="sign__lines">
-          {
-            fromLines.map(([label, price]) => (
-              <li>
-                <span>{label}</span>
-                <b>{rupees(price)}</b>
-              </li>
-            ))
-          }
-        </ul>
-        <a class="sign__more" href="#rates">
-          Full list <Icon name="down" />
-        </a>
-      </div>
-    </aside>
+    <div class="sparks" aria-hidden="true" data-sparks>
+      {back.map((s) => <i class="spark" style={s} />)}
+    </div>
+
+    <h1 class="hero__name" id="hero-title" data-name><span>{first}</span> <span>{rest.join(' ')}</span></h1>
+    <p class="hero__tag" data-tagline>{site.tagline}</p>
 
     <div class="hero__art" data-hero-art>
       <WokArt />
     </div>
 
-    <aside class="sign sign--open" data-hang aria-label="Opening hours">
-      <span class="sign__chains" aria-hidden="true"><Chain /><Chain /></span>
-      <div class="sign__plate">
-        <Studs />
-        <p class="sign__open">Open</p>
-        <p class="sign__hours">24 hours</p>
-        <svg class="sign__sunmoon" viewBox="0 0 120 24" aria-hidden="true" focusable="false">
-          <g fill="#f4b400">
-            <circle cx="13" cy="12" r="5" />
-            <path d="M107 3a9 9 0 0 0 0 18a14 14 0 0 1 0-18Z" />
-          </g>
-          <g fill="none" stroke="#f4b400" stroke-width="2" stroke-linecap="round">
-            <path d="M13 1.5v3M13 19.5v3M2.5 12h3M20.5 12h3M5.6 4.6l2.1 2.1M18.3 17.3l2.1 2.1M5.6 19.4l2.1-2.1M18.3 6.7l2.1-2.1" />
-            <path d="M36 12h48" stroke-width="3" stroke-dasharray="0 8" />
-          </g>
-        </svg>
-        <p class="sign__hindi" lang="hi">24 घंटे खुला</p>
-      </div>
-    </aside>
-  </div>
+    <div class="sparks sparks--front" aria-hidden="true" data-sparks>
+      {front.map((s) => <i class="spark" style={s} />)}
+    </div>
 
-  <div class="hero__counter" data-hero-actions>
-    <div class="hero__buttons">
+    <aside class="hero__open" data-hang aria-label="Opening hours">
+      <p class="hero__open-word">Open</p>
+      <p class="hero__open-hours">24 hours</p>
+      <p class="hero__open-hindi" lang="hi">24 घंटे खुला</p>
+    </aside>
+
+    <aside class="hero__rates" data-hang aria-label="A few starting prices">
+      <p class="hero__rates-title">Rate list</p>
+      <p class="hero__rates-sub">Starting at</p>
+      <ul class="hero__rates-lines">
+        {
+          fromLines.map(([label, price]) => (
+            <li>
+              <span>{label}</span>
+              <b>{rupees(price)}</b>
+            </li>
+          ))
+        }
+      </ul>
+      <a class="hero__rates-more" href="#rates">
+        Full list <Icon name="down" />
+      </a>
+    </aside>
+
+    <div class="hero__actions" data-hero-actions>
       <a class="btn btn--call" href={telHref}>
         <span class="btn__small">Call to order</span>
         <span class="btn__big">{site.phone.display}</span>
       </a>
-      <a class="btn btn--ink" href={site.links.maps} target="_blank" rel="noopener">
-        <Icon name="pin" /> Directions
-      </a>
-      <a class="btn btn--paper" href="#rates">
-        <Icon name="list" /> Rate list
-      </a>
+      <div class="hero__actions-row">
+        <a class="btn btn--ink" href={site.links.maps} target="_blank" rel="noopener">
+          <Icon name="pin" /> Directions
+        </a>
+        <a class="btn btn--paper" href="#rates">
+          <Icon name="list" /> Rate list
+        </a>
+      </div>
     </div>
+
     <p class="hero__where">
       <span>{site.address.shop}, {site.address.building}, {site.address.locality}</span>
       <span>Free home delivery within {site.delivery.freeWithinKm} km, minimum order ₹{site.delivery.minimumOrder}</span>

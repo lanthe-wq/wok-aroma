@@ -2,7 +2,7 @@
 
 One-page website for **Wok Aroma**, Ground Floor, Eros Market Place, GF 80, Shakti Khand 2, Indirapuram, Ghaziabad. Built with [Astro](https://astro.build) (static output), [GSAP](https://gsap.com) + ScrollTrigger + SplitText, and [Lenis](https://lenis.darkroom.engineering) smooth scroll. Fonts are self-hosted.
 
-The design is *The Rate Board*: a hand-painted shopfront. A steel shutter preloader lifts and stays up, the menu is a lane of enamel boards on a rail, combos are posters pasted over each other, and the footer is uncovered as the page lifts away. See [`DESIGN.md`](DESIGN.md) for the system and [`PRODUCT.md`](PRODUCT.md) for the product facts it is built on.
+The design is *The Rate Board*: a hand-painted shopfront, seen after dark. A steel shutter preloader lifts and stays up on a night kitchen where the wok is the only light, the menu is a lane of enamel boards on a rail, combos are posters pasted over each other, and the footer is uncovered as the page lifts away. See [`DESIGN.md`](DESIGN.md) for the system and [`PRODUCT.md`](PRODUCT.md) for the product facts it is built on.
 
 ## Run it
 
@@ -45,6 +45,7 @@ These came from the Google Maps panel and a photograph of the printed menu. Noth
 - Real photographs of the dishes. The design is built to work without any; photos can be added to the rate list or combo slabs.
 - The Instagram handle and the Swiggy and Zomato store links, in `src/config/site.js`.
 - The live domain: set `site` in `astro.config.mjs`. It feeds the canonical URL and the share image URL (`public/og.png`, 1200×630).
+- The share image is a render of the hero, not a separate design. If the hero changes, re-render it: open `/` at 1440×900 once the page is lit, hide the drum and the action buttons, capture the stage under the nav (1440×848), scale it to 630px tall and centre it on a 1200×630 canvas of the wall colour (`#0e0907`).
 
 ## Structure
 
@@ -61,7 +62,7 @@ DESIGN.md          the visual system
 ## Accessibility and resilience
 
 - The page is fully readable and usable with JavaScript off; the shutter is only ever added by script, and an inline timeout removes it after nine seconds in any case.
-- `prefers-reduced-motion` gets a plain progress plate, no smooth scroll, no pinned lane (boards stack), static flames and ticker, and no curtain footer.
+- `prefers-reduced-motion` gets a plain progress plate, no smooth scroll, no pinned lane (boards stack), static flames and ticker, no sparks or name flicker (the night scene is simply lit and still), and no curtain footer.
 - Text contrast is AA on every surface (checked in the browser at 1440×900 and 390×844). Focus rings are visible everywhere. Veg and non-veg are marked by shape and label as well as colour.
 - Touch devices get native scrolling, a stacked rate list with a sticky jump row, and a fixed Call / Directions / Rate list bar.
 

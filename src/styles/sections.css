@@ -1,5 +1,6 @@
 /* ───────────────────────────────────────────────────────────────────────────
    Statement · rate list · combos · visit · footer · phone action bar
+   After dark: warm-black walls with the slats showing, fire and tube light, enamel plates lit from the front.
    ─────────────────────────────────────────────────────────────────────────── */
 
 /* ── Statement ─────────────────────────────────────────────────────────────── */
@@ -8,7 +9,11 @@
   position: relative;
   padding: clamp(5rem, 12vw, 10rem) clamp(1rem, 4vw, 3rem);
   color: var(--enamel);
-  background: var(--chilli-deep);
+  background:
+    var(--slats),
+    radial-gradient(ellipse 70% 90% at 10% 115%, rgb(200 34 24 / 0.5), transparent 70%),
+    radial-gradient(ellipse 55% 70% at 100% -10%, rgb(77 32 15 / 0.7), transparent 70%),
+    var(--night);
 }
 .statement__text {
   max-width: 17em;
@@ -21,6 +26,9 @@
 .statement__text em {
   font-style: normal;
   color: var(--turmeric);
+  text-shadow:
+    0 0 0.25em rgb(255 122 26 / 0.85),
+    0 0 0.7em rgb(232 52 28 / 0.6);
 }
 .statement__link {
   display: flex;
@@ -49,7 +57,10 @@
   position: relative;
   padding: var(--s-9) 0 var(--s-8);
   color: var(--enamel);
-  background: var(--shutter);
+  background:
+    var(--slats),
+    radial-gradient(ellipse 90% 55% at 50% 0%, #0f5845 0%, transparent 70%),
+    var(--night-green);
 }
 
 .lane__head {
@@ -63,7 +74,8 @@
 }
 .lane__intro h2 {
   font-size: var(--step-4);
-  color: var(--turmeric);
+  color: var(--neon-cream);
+  text-shadow: var(--neon);
 }
 .lane__intro p {
   margin-top: var(--s-2);
@@ -119,7 +131,7 @@
   z-index: 8;
   padding: var(--s-3) var(--gutter) 0;
   margin-bottom: var(--s-6);
-  background: var(--shutter);
+  background: var(--night-green);
   border-bottom: 3px solid var(--shutter-deep);
 }
 .lane__ruler-track {
@@ -197,7 +209,9 @@
   border-radius: var(--radius);
   rotate: var(--tilt, 0deg);
   transform-origin: 50% -3em;
-  box-shadow: 0 16px 22px -14px rgb(0 0 0 / 0.6);
+  box-shadow:
+    0 22px 30px -14px rgb(0 0 0 / 0.85),
+    0 0 0 1px rgb(255 214 150 / 0.1);
 }
 /* painted pinstripe inside the frame */
 .board__sway::before {
@@ -415,6 +429,7 @@
 }
 .lane--pinned .lane__ruler {
   position: static;
+  background: transparent;
   margin-bottom: 0;
   padding-bottom: var(--s-2);
   border-bottom: 0;
@@ -476,7 +491,7 @@
   top: 0;
   bottom: -4px;
   width: 0;
-  border-left: 5px dashed var(--soot);
+  border-left: 5px dashed var(--steel-high);
 }
 .lane--pinned .board__chains::before {
   left: 16%;
@@ -489,8 +504,12 @@
 
 .combos {
   padding: var(--s-9) var(--gutter);
-  color: var(--soot);
-  background: var(--turmeric);
+  color: var(--enamel);
+  background:
+    var(--slats),
+    radial-gradient(ellipse 80% 40% at 50% 0%, rgb(77 32 15 / 0.75), transparent 70%),
+    radial-gradient(ellipse 70% 35% at 50% 88%, rgb(200 34 24 / 0.35), transparent 70%),
+    var(--night);
 }
 .combos__head {
   max-width: 72rem;
@@ -498,6 +517,8 @@
 }
 .combos__head h2 {
   font-size: var(--step-4);
+  color: var(--neon-cream);
+  text-shadow: var(--neon);
 }
 .combos__head p {
   margin-top: var(--s-2);
@@ -527,6 +548,8 @@
   rotate: var(--tilt, 0deg);
   transform-origin: 50% 0;
   overflow: hidden;
+  /* each poster throws a little shade up onto the one pasted before it */
+  box-shadow: 0 -18px 36px -12px rgb(0 0 0 / 0.75);
 }
 .slab--chilli {
   --slab-fg: var(--enamel);
@@ -539,6 +562,7 @@
 .slab--soot {
   --slab-fg: var(--turmeric);
   background: var(--soot);
+  border-color: var(--turmeric);
 }
 .slab--enamel {
   --slab-fg: var(--soot);
@@ -672,13 +696,19 @@
   margin: var(--s-8) auto 0;
   padding: var(--s-6) var(--s-7);
   color: var(--enamel);
-  background: var(--soot);
-  border-radius: 14px;
+  background: rgb(20 8 5 / 0.6);
+  border: 5px solid var(--flame-yellow);
+  border-radius: 22px;
+  box-shadow:
+    0 0 6px var(--flame-yellow),
+    0 0 26px rgb(255 122 26 / 0.5),
+    inset 0 0 14px rgb(255 198 31 / 0.3);
 }
 .deliver h3 {
   margin-bottom: var(--s-3);
   font-size: var(--step-3);
   color: var(--turmeric);
+  text-shadow: 0 0 0.3em rgb(255 122 26 / 0.6);
 }
 .deliver p {
   max-width: 36ch;
@@ -698,7 +728,10 @@
   gap: var(--s-8);
   padding: var(--s-9) max(var(--gutter), calc((100% - 74rem) / 2));
   color: var(--ink);
-  background: var(--enamel);
+  background:
+    var(--slats),
+    radial-gradient(ellipse 60% 70% at 85% 62%, rgb(200 34 24 / 0.4), transparent 70%),
+    var(--night);
 }
 .visit__plate {
   align-self: start;
@@ -706,9 +739,13 @@
   text-align: center;
   color: var(--turmeric);
   background: var(--shutter);
-  border: 8px solid var(--soot);
+  border: 6px solid var(--flame-yellow);
   border-radius: 14px;
   rotate: -2deg;
+  box-shadow:
+    0 0 6px var(--flame-yellow),
+    0 0 26px rgb(255 122 26 / 0.5),
+    inset 0 0 14px rgb(255 198 31 / 0.25);
 }
 .visit__shopno {
   font-family: var(--font-display);
@@ -728,9 +765,31 @@
   color: var(--enamel);
 }
 
+.visit__info {
+  position: relative;
+  padding: var(--s-7);
+  color: var(--ink);
+  background: var(--enamel);
+  border: 6px solid var(--soot);
+  border-radius: var(--radius);
+  rotate: 0.4deg;
+  box-shadow:
+    0 22px 40px -14px rgb(0 0 0 / 0.85),
+    0 0 0 2px rgb(255 150 50 / 0.3);
+}
+/* painted pinstripe inside the frame, as on the rate boards */
+.visit__info::before {
+  content: '';
+  position: absolute;
+  inset: 5px;
+  border: 2px solid var(--turmeric-deep);
+  border-radius: 3px;
+  pointer-events: none;
+}
 .visit__info h2 {
   margin-bottom: var(--s-5);
   font-size: var(--step-4);
+  color: var(--chilli);
 }
 .visit__address {
   display: grid;
@@ -779,7 +838,10 @@
 .footer {
   position: relative;
   color: var(--enamel);
-  background: var(--soot);
+  background:
+    var(--slats),
+    radial-gradient(ellipse 70% 90% at 50% 130%, rgb(200 34 24 / 0.5), transparent 70%),
+    var(--night);
 }
 .footer__drum {
   height: 34px;
@@ -797,7 +859,8 @@
   font-family: var(--font-display);
   font-size: var(--step-4);
   line-height: 1.1;
-  color: var(--turmeric);
+  color: var(--neon-cream);
+  text-shadow: var(--neon);
 }
 .footer__sub {
   max-width: 34em;
@@ -839,7 +902,7 @@
 @media (min-width: 900px) and (min-height: 640px) {
   .has-curtain .curtain {
     margin-bottom: var(--footer-h, 0px);
-    background: var(--enamel);
+    background: var(--night);
   }
   .has-curtain .footer {
     position: fixed;
@@ -941,6 +1004,9 @@
   }
   .visit__plate {
     max-width: 20rem;
+  }
+  .visit__info {
+    padding: var(--s-6) var(--s-5);
   }
 }
 @media (max-width: 559px) {

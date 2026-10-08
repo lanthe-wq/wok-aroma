@@ -1,0 +1,9 @@
+{
+  // Cloudflare Workers static assets: `wrangler deploy` uploads the Astro build in dist/.
+  // Without this file Wrangler auto-detects Astro and installs @astrojs/cloudflare, whose
+  // prerenderer fails on this static site. The site needs no adapter and no server code.
+  "name": "wok-aroma",
+  "compatibility_date": "2026-10-01",
+  "build": { "command": "npm run build" },
+  "assets": { "directory": "./dist" }
+}

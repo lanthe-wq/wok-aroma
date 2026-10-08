@@ -1,10 +1,14 @@
 ---
 import { site, telHref } from '../config/site.js';
 import Icon from './Icon.astro';
+import LogoMark from './LogoMark.astro';
 ---
 
 <header class="nav on-dark" data-nav>
-  <a class="nav__brand" href="#top" aria-label={`${site.name}, back to the top`}>{site.name}</a>
+  <a class="nav__brand" href="#top" aria-label={`${site.name}, back to the top`}>
+    <LogoMark />
+    <span>{site.name}</span>
+  </a>
   <nav class="nav__links" aria-label="Sections">
     <a href="#rates">Rate list</a>
     <a href="#combos">Combos</a>

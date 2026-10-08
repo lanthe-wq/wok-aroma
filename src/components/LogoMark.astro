@@ -1,0 +1,38 @@
+---
+// The neon wok: the small-size cut of the logo (same art as public/favicon.svg: heavier tubes and a
+// single drip, so it holds up at a few dozen pixels). The glow is two blurs under the line, drawn
+// in the SVG itself, so it needs nothing from the page. Decorative: the name next to it says what it is.
+---
+
+<svg class="logo-mark" viewBox="26 4 188 223" aria-hidden="true" focusable="false">
+  <defs>
+    <filter id="logo-glow-amber" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="b1" />
+      <feGaussianBlur in="SourceGraphic" stdDeviation="12" result="b2" />
+      <feMerge>
+        <feMergeNode in="b2" />
+        <feMergeNode in="b1" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+    <filter id="logo-glow-red" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="b1" />
+      <feGaussianBlur in="SourceGraphic" stdDeviation="12" result="b2" />
+      <feMerge>
+        <feMergeNode in="b2" />
+        <feMergeNode in="b1" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+  <g fill="none" stroke="#ffbf3b" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" filter="url(#logo-glow-amber)">
+    <path d="M72 92 C62 78 82 68 72 52 C67 44 73 36 79 30"></path>
+    <path d="M105 88 C95 72 115 60 105 42 C100 32 108 22 114 14"></path>
+    <path d="M138 92 C128 78 148 70 138 56 C133 48 139 40 145 34"></path>
+  </g>
+  <g fill="none" stroke="#ff4c4d" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" filter="url(#logo-glow-red)">
+    <path d="M36 106 H174 C174 148 142 174 105 174 C68 174 36 148 36 106 Z"></path>
+    <path d="M178 108 L204 90"></path>
+    <path d="M105 184 C108 196 118 202 118 208 C118 215 112 217 105 217 C98 217 92 215 92 208 C92 202 102 196 105 184 Z"></path>
+  </g>
+</svg>

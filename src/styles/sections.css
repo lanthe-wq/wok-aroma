@@ -873,6 +873,13 @@
   padding: var(--s-8) var(--gutter) var(--s-7);
   text-align: center;
 }
+/* The full logo mark, lit like the sign it is. Its height is fixed so the curtain measures the footer
+   right; the SVG carries its own glow and room for it. */
+.footer__mark {
+  display: block;
+  width: auto;
+  height: 5rem;
+}
 .footer__line {
   font-family: var(--font-display);
   font-size: var(--step-4);
@@ -1145,12 +1152,26 @@
     gap: var(--s-3);
   }
   .nav__brand {
+    gap: 0.4rem;
     font-size: 1.3rem;
+  }
+  .logo-mark {
+    height: 2rem;
   }
   .nav__call {
     gap: 0.4rem;
     padding-inline: 0.7rem;
     font-size: 1.1rem;
+  }
+}
+@media (max-width: 349px) {
+  /* The mark and the name together run under the call chip here, so the mark stands alone (the link
+     still carries the name in its aria-label) and keeps a 44px-wide target. */
+  .nav__brand span {
+    display: none;
+  }
+  .nav__brand {
+    min-width: 44px;
   }
 }
 @media (max-width: 319px) {

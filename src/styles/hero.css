@@ -46,6 +46,16 @@
   transform: none;
   pointer-events: auto;
 }
+/* The neon wok sits left of the name. The glow is drawn outside its box, so the box stays tight. */
+.nav__brand {
+  gap: 0.55rem;
+}
+.logo-mark {
+  flex: none;
+  height: 2.25rem;
+  width: auto;
+  overflow: visible;
+}
 
 .nav__links {
   display: flex;

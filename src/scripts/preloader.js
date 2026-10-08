@@ -9,6 +9,11 @@
 //   preload        first visit this session: full sequence
 //   preload-quick  repeat visit this session: short version
 //   preload-lite   reduced motion: a plain progress plate, no movement
+//
+// On phones and touch screens (`compact`) the same beats run on a shorter clock, because the people
+// holding them are usually after the phone number or the rate list: a shorter counter, a quicker
+// two-stage lift, and a ceiling on how long it will wait for the load event. `?preload` forces the
+// full sequence on any screen.
 
 import gsap from 'gsap';
 
@@ -19,11 +24,12 @@ const STATUS = [
   [96, 'Shutter going up'],
 ];
 
-export function runPreloader({ mode, onReveal, onDone }) {
+export function runPreloader({ mode, compact = false, held = null, onOpen, onReveal, onDone }) {
   const root = document.documentElement;
   const shutter = document.getElementById('shutter');
 
   const finish = () => {
+    held?.releaseAll();
     root.classList.remove('preload', 'preload-quick', 'preload-lite');
     shutter?.remove();
     onDone?.();
@@ -37,7 +43,7 @@ export function runPreloader({ mode, onReveal, onDone }) {
 
   const lite = mode === 'preload-lite';
   const quick = mode === 'preload-quick';
-  let minMs = lite ? 700 : quick ? 1100 : 2400;
+  let minMs = compact ? (lite ? 400 : quick ? 450 : 550) : lite ? 700 : quick ? 1100 : 2400;
 
   try {
     sessionStorage.setItem('wa-seen', '1');
@@ -51,19 +57,32 @@ export function runPreloader({ mode, onReveal, onDone }) {
     target = Math.max(target, v);
   };
 
-  Promise.all([
+  const fontsReady = Promise.all([
     document.fonts.load('1em "Yatra One"'),
     document.fonts.load('600 1em "Teko Variable"'),
     document.fonts.load('400 1em Hind'),
   ])
     .catch(() => {})
-    .then(() => raise(66));
+    .then(() => {
+      raise(66);
+      // the page below the hero (kept out of layout behind the shutter on phones) comes in now
+      held?.start();
+    });
 
   const loaded =
     document.readyState === 'complete'
       ? Promise.resolve()
       : new Promise((resolve) => addEventListener('load', resolve, { once: true }));
-  loaded.then(() => raise(100));
+  // 100 means the page is loaded and, on phones, every section has been let in
+  loaded.then(() => held?.start());
+  Promise.all([loaded, held?.done]).then(() => raise(100));
+  // Slow connections: a phone is not held behind the shutter for the sake of the last font file
+  // or the load event. Once the fonts the hero is lit in have arrived, 2.6 s after the
+  // navigation began is the longest it will wait (the rest swaps in behind the lifted shutter).
+  if (compact) {
+    const cap = () => Promise.resolve(held?.done).then(() => raise(100));
+    fontsReady.then(() => setTimeout(cap, Math.max(150, 2600 - performance.now())));
+  }
 
   // Any key or click skips ahead
   let timeScale = 1;
@@ -71,6 +90,7 @@ export function runPreloader({ mode, onReveal, onDone }) {
     minMs = 0;
     timeScale = 3;
     lifting?.timeScale(3);
+    held?.releaseAll();
   };
   addEventListener('keydown', skip, { once: true });
   shutter.addEventListener('pointerdown', skip, { once: true });
@@ -82,9 +102,13 @@ export function runPreloader({ mode, onReveal, onDone }) {
   let lifting = null;
   let done = false;
 
+  let lastN = -1;
   const paint = () => {
     const n = Math.round(shown);
-    countEl.textContent = String(n);
+    if (n !== lastN) {
+      lastN = n;
+      countEl.textContent = String(n);
+    }
     let idx = 0;
     STATUS.forEach(([from], i) => {
       if (n >= from) idx = i;
@@ -99,7 +123,7 @@ export function runPreloader({ mode, onReveal, onDone }) {
     if (done) return;
     const elapsed = (performance.now() - t0) * timeScale;
     const cap = Math.min(target, minMs ? (elapsed / minMs) * 100 : 100);
-    shown += (cap - shown) * 0.16;
+    shown += (cap - shown) * (compact ? 0.28 : 0.16);
     if (cap >= 100 && 100 - shown < 0.6) shown = 100;
     paint();
     if (shown >= 100) {
@@ -114,6 +138,8 @@ export function runPreloader({ mode, onReveal, onDone }) {
   // ── Opening ────────────────────────────────────────────────────────────────
   function open() {
     removeEventListener('keydown', skip);
+    held?.releaseAll();
+    onOpen?.();
 
     if (lite) {
       gsap.to(shutter, {
@@ -135,37 +161,41 @@ export function runPreloader({ mode, onReveal, onDone }) {
     lifting = gsap.timeline({ onComplete: end });
     lifting.timeScale(timeScale);
 
+    // [pull, catch, roll, how far into the roll the hero is revealed], in seconds
+    const [pull, hold, roll, early] = compact ? [0.22, 0.1, 0.6, 0.35] : [0.55, 0.32, 1.45, 0.75];
+
     if (quick) {
+      const dur = compact ? 0.6 : 0.95;
       lifting
         .to(lift, {
           p: 1,
-          duration: 0.95,
+          duration: dur,
           ease: 'power3.inOut',
           onUpdate: () => apply(Math.sin(Math.PI * lift.p) * 1.6),
         })
-        .add(() => onReveal?.(), '>-0.45');
+        .add(() => onReveal?.(), compact ? '>-0.3' : '>-0.45');
     } else {
       lifting
         // stage one: a short pull, then it catches
         .to(lift, {
           p: 0.13,
-          duration: 0.55,
+          duration: pull,
           ease: 'power2.out',
           onUpdate: () => apply(2.4),
         })
         .set(sheet, { x: 0 })
-        .to({}, { duration: 0.32 })
+        .to({}, { duration: hold })
         // stage two: the full roll
         .to(lift, {
           p: 1,
-          duration: 1.45,
+          duration: roll,
           ease: 'power3.inOut',
           onUpdate: () => apply(Math.sin(Math.PI * lift.p) * 2.2 + 0.3),
         })
-        .add(() => onReveal?.(), '>-0.75');
+        .add(() => onReveal?.(), `>-${early}`);
     }
 
-    lifting.to(drum, { y: -drumH - 4, duration: 0.4, ease: 'power2.in' }, '>-0.05');
+    lifting.to(drum, { y: -drumH - 4, duration: compact ? 0.25 : 0.4, ease: 'power2.in' }, '>-0.05');
   }
 
   function end() {

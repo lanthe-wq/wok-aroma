@@ -19,27 +19,35 @@ export function initMarquee({ reduced }) {
   let boost = 0;
   let smooth = 0;
 
+  // Speed follows the scroll: a ticker callback that only exists while the band is on screen
+  // (GSAP's ticker stays awake, calling every frame, for as long as anything listens to it)
+  const follow = () => {
+    boost *= 0.93;
+    smooth += (boost - smooth) * 0.14;
+    loop.timeScale(dir * (1 + smooth));
+  };
+
   ScrollTrigger.create({
     trigger: el,
     start: 'top bottom',
     end: 'bottom top',
     onToggle: (self) => {
       inView = self.isActive;
-      inView ? loop.play() : loop.pause();
+      if (inView) {
+        loop.play();
+        gsap.ticker.add(follow);
+      } else {
+        loop.pause();
+        gsap.ticker.remove(follow);
+      }
     },
   });
 
   ScrollTrigger.create({
     onUpdate: (self) => {
+      if (!inView) return;
       dir = self.direction || dir;
       boost = Math.min(Math.abs(self.getVelocity()) / 240, 6);
     },
-  });
-
-  gsap.ticker.add(() => {
-    if (!inView) return;
-    boost *= 0.93;
-    smooth += (boost - smooth) * 0.14;
-    loop.timeScale(dir * (1 + smooth));
   });
 }

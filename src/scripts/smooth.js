@@ -1,14 +1,15 @@
 // Lenis smooth scroll, driven by GSAP's ticker so ScrollTrigger stays in sync.
-// Not created for reduced motion or touch devices: native momentum is better there.
+// Not created for reduced motion or touch devices: native momentum is better there, and
+// phones never download the library (it is its own chunk).
 
-import Lenis from 'lenis';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-export function initSmoothScroll({ reduced }) {
+export async function initSmoothScroll({ reduced }) {
   const touch = matchMedia('(hover: none)').matches;
   if (reduced || touch) return null;
 
+  const { default: Lenis } = await import('lenis');
   const lenis = new Lenis({
     lerp: 0.09,
     wheelMultiplier: 0.95,

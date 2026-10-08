@@ -1,55 +1,64 @@
-// Orchestrator. Order matters: ScrollTriggers are created top-to-bottom so that the
-// pinned rate list has added its spacing before anything below it measures itself.
+// Orchestrator. The shutter and the hero reveal only need GSAP's core, so they are the first chunk of
+// script. Everything that scrolls (ScrollTrigger, the lane, the ticker, the curtain...) is a second
+// chunk, fetched at once and set up alongside the shutter in page.js; see the note at the top of
+// that file about creation order.
 
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { SplitText } from 'gsap/SplitText';
-
-import { initSmoothScroll } from './smooth.js';
 import { runPreloader } from './preloader.js';
 import { initHero } from './hero.js';
-import { initMarquee } from './marquee.js';
-import { initStatement } from './statement.js';
-import { initLane } from './lane.js';
-import { initCombos } from './combos.js';
-import { initCurtain } from './curtain.js';
-import { initPlay } from './play.js';
-import { initUi } from './ui.js';
-
-gsap.registerPlugin(ScrollTrigger, SplitText);
+import { holdBelow } from './held.js';
+import { rememberPlace } from './place.js';
 
 const root = document.documentElement;
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const mode = root.getAttribute('data-preload') || '';
 const preloading = root.classList.contains('preload');
 
-const lenis = initSmoothScroll({ reduced });
-if (preloading) lenis?.stop();
+rememberPlace();
 
-const hero = initHero({ reduced, preloading, mode });
-initMarquee({ reduced });
-initStatement({ reduced });
-initLane({ lenis });
-initCombos({ reduced });
-initCurtain({ reduced });
-initPlay({ reduced });
-initUi({ lenis, reduced });
+// Phones and touch screens get the shorter shutter and the lighter set-up; `?preload` is the
+// way to see the full desktop sequence anywhere.
+const forced = /[?&]preload/.test(location.search);
+const compact = !forced && matchMedia('(hover: none), (max-width: 899px)').matches;
 
-const settle = () => {
-  lenis?.start();
-  ScrollTrigger.refresh();
-};
+// While the shutter is being lifted the rest of the page waits its turn, so the lift and the reveal
+// have the main thread to themselves.
+let lifting = false;
+let liftDone = () => {};
+const afterLift = new Promise((resolve) => (liftDone = resolve));
 
-if (preloading) {
+// On phones the sections below the hero are held out of layout until the shutter is ready to lift
+const held = preloading ? holdBelow() : null;
+const quiet = () => (held && !held.isDone ? held.done : compact && lifting ? afterLift : null);
+let shutterUp = preloading;
+
+// Start fetching the rest now; it never blocks the shutter. If it fails to load the page is still
+// complete (nothing is hidden until its module runs).
+const page = import('./page.js')
+  .then((m) => m.boot({ reduced, compact, preloading, quiet, shutterUp: () => shutterUp }))
+  .catch((error) => {
+    console.error(error);
+    return null;
+  });
+
+const hero = initHero({ reduced, preloading, mode, compact });
+
+const shutterGone = new Promise((resolve) => {
+  if (!preloading) return resolve();
   runPreloader({
     mode,
+    compact,
+    held,
+    onOpen: () => (lifting = true),
     onReveal: () => hero.reveal(),
-    onDone: settle,
+    onDone: () => {
+      shutterUp = false;
+      lifting = false;
+      liftDone();
+      hero.live();
+      resolve();
+    },
   });
-} else {
-  settle();
-}
+});
 
-// Layout moves when fonts arrive; measure again
-document.fonts.ready.then(() => ScrollTrigger.refresh());
-addEventListener('load', () => ScrollTrigger.refresh());
+// Smooth scrolling starts and the page is measured once the shutter is up and the modules are in place
+Promise.all([page, shutterGone]).then(([p]) => p?.settle());

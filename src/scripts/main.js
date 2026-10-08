@@ -13,6 +13,7 @@ import { initStatement } from './statement.js';
 import { initLane } from './lane.js';
 import { initCombos } from './combos.js';
 import { initCurtain } from './curtain.js';
+import { initPlay } from './play.js';
 import { initUi } from './ui.js';
 
 gsap.registerPlugin(ScrollTrigger, SplitText);
@@ -31,6 +32,7 @@ initStatement({ reduced });
 initLane({ lenis });
 initCombos({ reduced });
 initCurtain({ reduced });
+initPlay({ reduced });
 initUi({ lenis, reduced });
 
 const settle = () => {

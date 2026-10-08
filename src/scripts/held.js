@@ -6,8 +6,9 @@
 // (display: none) and this lets them in one by one in idle time, after the fonts the
 // page is set in have arrived (so each section is laid out once, in its final type). The shutter
 // does not lift until they are all in, and anything that cannot wait (a tap on the shutter, the
-// failsafe) lets them all in at once. A link that arrived with a #section in it is followed once
-// the section exists (the browser only does that at load, when there was nothing to scroll to).
+// failsafe) lets them all in at once, and then the visitor is put back where they were (place.js).
+
+import { returnToPlace } from './place.js';
 
 const PHONE = '(hover: none), (max-width: 899px)';
 
@@ -28,14 +29,7 @@ export function holdBelow() {
   const complete = () => {
     if (isDone) return;
     isDone = true;
-    // followed here because the browser already tried, at load, when the target had no box
-    if (location.hash.length > 1) {
-      try {
-        document.querySelector(location.hash)?.scrollIntoView();
-      } catch (e) {
-        /* not a selector (e.g. #1abc): nothing to follow */
-      }
-    }
+    returnToPlace(); // the browser tried at load, when the sections below the hero had no height
     finish();
   };
 

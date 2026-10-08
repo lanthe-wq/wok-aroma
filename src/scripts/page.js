@@ -20,6 +20,7 @@ import { initCombos } from './combos.js';
 import { initCurtain } from './curtain.js';
 import { initPlay } from './play.js';
 import { initUi } from './ui.js';
+import { returnToPlace } from './place.js';
 
 gsap.registerPlugin(ScrollTrigger);
 // The address bar sliding away on a phone is not a resize worth measuring the whole page for, and
@@ -69,16 +70,10 @@ export async function boot({ reduced, compact, preloading, quiet = () => null, s
     }
   }
 
-  // A link that came in with a #section: the browser took it there when the page loaded, before the
-  // pinned rate list had added its height above it. Follow it again now that everything is in place,
-  // while the shutter still holds the page still (a visitor already scrolling is left alone).
-  if (shutterUp() && location.hash.length > 1) {
-    try {
-      document.querySelector(location.hash)?.scrollIntoView();
-    } catch (e) {
-      /* not a selector: nothing to follow */
-    }
-  }
+  // The browser put a #section link or a reload where it was before the pinned rate list had added
+  // its height above it; put the visitor back now that everything is in place, while the shutter
+  // still holds the page still (a visitor already scrolling is left alone).
+  if (shutterUp()) returnToPlace();
 
   return {
     lenis,

@@ -6,11 +6,14 @@
 import { runPreloader } from './preloader.js';
 import { initHero } from './hero.js';
 import { holdBelow } from './held.js';
+import { rememberPlace } from './place.js';
 
 const root = document.documentElement;
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const mode = root.getAttribute('data-preload') || '';
 const preloading = root.classList.contains('preload');
+
+rememberPlace();
 
 // Phones and touch screens get the shorter shutter and the lighter set-up; `?preload` is the
 // way to see the full desktop sequence anywhere.

@@ -74,7 +74,6 @@ const toss = [
   ['sesame', 206, 168],
 ];
 
-
 // Idle loops for the tossed pieces. Each piece rises, turns and falls back, then rests a beat.
 // These used to be one GSAP timeline per piece; as CSS transform animations they run off the
 // main thread, can be paused with the rest of the hero, and cost no script per frame.
@@ -411,7 +410,7 @@ const tossCss = tossLoops.map((l) => l.css).join('');
   <circle cx="567" cy="231" r="2.8" fill="#6d5c54" />
   <circle cx="567" cy="244" r="2.8" fill="#6d5c54" />
 
-  <!-- Tossed ingredients (their loops are driven by GSAP) -->
+  <!-- Tossed ingredients (idle loops are CSS, see the keyframes above; GSAP fades them in and tosses them on a tap) -->
   <g class="wok__toss">
     {
       toss.map(([kind, x, y], i) => (
@@ -574,7 +573,8 @@ const tossCss = tossLoops.map((l) => l.css).join('');
     .jet,
     .steam,
     .toss__inner {
-      animation: none;
+      /* !important: the tossed pieces name their keyframes in a style attribute */
+      animation: none !important;
     }
     .steam {
       opacity: 0.45;

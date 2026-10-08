@@ -104,7 +104,7 @@ function initWok() {
   // `click` rather than pointerdown: a finger dragging the page across the wok is not a tap
   art.addEventListener('click', () => {
     if (root.classList.contains('preload') || hero.classList.contains('is-igniting')) return;
-    toss ||= build();
+    if (!toss) toss = build();
     if (toss.isActive()) return;
     toss.restart();
   });

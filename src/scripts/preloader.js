@@ -82,6 +82,12 @@ export function runPreloader({ mode, compact = false, held = null, onOpen, onRev
   if (compact) {
     const cap = () => Promise.resolve(held?.done).then(() => raise(100));
     fontsReady.then(() => setTimeout(cap, Math.max(150, 2600 - performance.now())));
+    // ...and if a font request never answers at all, 4.5 s is the longest of all: the shutter lifts and
+    // the text sets in whatever face is to hand, then swaps when (if) the font arrives
+    setTimeout(() => {
+      held?.start();
+      cap();
+    }, Math.max(150, 4500 - performance.now()));
   }
 
   // Any key or click skips ahead

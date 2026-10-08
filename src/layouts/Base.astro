@@ -1,7 +1,8 @@
 ---
 import { createHash } from 'node:crypto';
-import { readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { existsSync, readFileSync } from 'node:fs';
+import { resolve, sep } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { site } from '../config/site.js';
 
 import 'lenis/dist/lenis.css';
@@ -18,13 +19,17 @@ const canonical = new URL('/', Astro.site).href;
 // Fonts are self-hosted subsets in public/fonts (see "Fonts" in the README): no
 // third-party requests at runtime. Each URL carries a hash of its file, so the
 // one-year immutable cache in public/_headers can never serve a stale font.
+// The page is compiled into .astro/.prerender/chunks, so the project root is the working directory
+// (npm scripts always run there) or, failing that, whatever sits above that .astro folder. If the
+// fonts cannot be found the build stops: an unhashed URL under a year-long immutable cache would
+// serve a stale font after any edit, and nobody would see why.
+const fontDir = [process.cwd(), fileURLToPath(import.meta.url).split(`${sep}.astro${sep}`)[0]]
+  .map((root) => resolve(root, 'public/fonts'))
+  .find((dir) => existsSync(dir));
+if (!fontDir) throw new Error('Base.astro: public/fonts not found. Run the build from the project root.');
 const font = (file) => {
-  try {
-    const bytes = readFileSync(resolve('public/fonts', file));
-    return `/fonts/${file}?v=${createHash('sha1').update(bytes).digest('hex').slice(0, 8)}`;
-  } catch {
-    return `/fonts/${file}`;
-  }
+  const bytes = readFileSync(resolve(fontDir, file));
+  return `/fonts/${file}?v=${createHash('sha1').update(bytes).digest('hex').slice(0, 8)}`;
 };
 const yatraLatin = font('yatra-one-latin.woff2');
 const yatraDeva = font('yatra-one-devanagari.woff2');

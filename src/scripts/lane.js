@@ -34,6 +34,7 @@ export function initLane({ lenis }) {
       filterButtons.forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
     });
   });
+  lane.classList.add('filter-live'); // the buttons are only shown once they work (sections.css)
 
   const setCurrent = (index) => {
     chips.forEach((chip, i) => {

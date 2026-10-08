@@ -42,21 +42,45 @@ const page = import('./page.js')
 
 const hero = initHero({ reduced, preloading, mode, compact });
 
+let revealed = false;
+const reveal = () => {
+  if (revealed) return;
+  revealed = true;
+  hero.reveal();
+};
+
 const shutterGone = new Promise((resolve) => {
   if (!preloading) return resolve();
+
+  let gone = false;
+  const goneNow = () => {
+    if (gone) return;
+    gone = true;
+    shutterUp = false;
+    lifting = false;
+    liftDone();
+    hero.live();
+    resolve();
+  };
+
+  // The inline failsafe in the page head takes the shutter away after nine seconds whatever happens
+  // (a font request that never answers, say). The page must then be lit and scrollable, not left
+  // with an invisible hero and smooth scrolling still switched off.
+  const watch = new MutationObserver(() => {
+    if (root.classList.contains('preload')) return;
+    watch.disconnect();
+    reveal();
+    goneNow();
+  });
+  watch.observe(root, { attributes: true, attributeFilter: ['class'] });
+
   runPreloader({
     mode,
     compact,
     held,
     onOpen: () => (lifting = true),
-    onReveal: () => hero.reveal(),
-    onDone: () => {
-      shutterUp = false;
-      lifting = false;
-      liftDone();
-      hero.live();
-      resolve();
-    },
+    onReveal: reveal,
+    onDone: goneNow,
   });
 });
 

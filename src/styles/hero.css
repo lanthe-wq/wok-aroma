@@ -475,9 +475,17 @@ html.preload .hero:not(.is-live) :is(.spark, .flame__flick, .jet, .ember, .steam
   color: var(--soot);
   border-bottom: 3px solid var(--chilli);
 }
+/* a 44px thumb target without moving the underline: the extra reach is an invisible layer on the link */
 @media (hover: none), (pointer: coarse) {
   .hero__rates-more {
-    min-height: 44px;
+    position: relative;
+    z-index: 1; /* above the price rows it overlaps */
+  }
+  .hero__rates-more::after {
+    content: '';
+    position: absolute;
+    /* measured from inside the 3px underline: about 47px in all, the line staying where it is */
+    inset: -11px -8px -14px;
   }
 }
 .hero__rates-more svg {

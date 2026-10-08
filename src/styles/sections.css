@@ -99,6 +99,11 @@
   background: var(--enamel);
   border: 3px solid var(--enamel);
   border-radius: var(--radius);
+  /* its room is kept from the start, but it is not shown until lane.js has wired it up */
+  visibility: hidden;
+}
+[data-lane].filter-live .filter {
+  visibility: visible;
 }
 .filter button {
   display: inline-flex;

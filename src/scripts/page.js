@@ -20,7 +20,7 @@ import { initCombos } from './combos.js';
 import { initCurtain } from './curtain.js';
 import { initPlay } from './play.js';
 import { initUi } from './ui.js';
-import { returnToPlace } from './place.js';
+import { returnToPlace, visitor } from './place.js';
 
 gsap.registerPlugin(ScrollTrigger);
 // The address bar sliding away on a phone is not a resize worth measuring the whole page for, and
@@ -34,6 +34,7 @@ const idle = () =>
   });
 
 export async function boot({ reduced, compact, preloading, quiet = () => null, shutterUp = () => false }) {
+
   // (if the smooth-scroll chunk cannot load, the page simply scrolls natively)
   const lenis = await initSmoothScroll({ reduced }).catch(() => null);
   if (preloading) lenis?.stop();
@@ -71,9 +72,11 @@ export async function boot({ reduced, compact, preloading, quiet = () => null, s
   }
 
   // The browser put a #section link or a reload where it was before the pinned rate list had added
-  // its height above it; put the visitor back now that everything is in place, while the shutter
-  // still holds the page still (a visitor already scrolling is left alone).
-  if (shutterUp()) returnToPlace();
+  // its height above it; put the visitor back now that everything is in place. Behind the shutter the
+  // page is held still, so that is always safe. If this chunk arrived after the shutter had gone
+  // (a slow link, or the short quick / reduced-motion shutters), do it only for a visitor who has
+  // not yet taken hold of the page themselves.
+  if (shutterUp() || !visitor.moved) returnToPlace();
 
   return {
     lenis,

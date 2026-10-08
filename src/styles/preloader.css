@@ -115,6 +115,13 @@ html.preload body {
   letter-spacing: 0.14em;
   text-transform: uppercase;
 }
+/* On narrow phones the status line wraps to two lines for some of its phrases;
+   reserve both so the plate never changes height as the count rises. */
+@media (max-width: 420px) {
+  .shutter__status {
+    min-height: 3.1em;
+  }
+}
 
 /* Bottom bar and pull handle: the part you grab to lift a shutter */
 .shutter__bar {

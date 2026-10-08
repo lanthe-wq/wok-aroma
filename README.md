@@ -1,6 +1,6 @@
 # Wok Aroma
 
-One-page website for **Wok Aroma**, Ground Floor, Eros Market Place, GF 80, Shakti Khand 2, Indirapuram, Ghaziabad. Built with [Astro](https://astro.build) (static output), [GSAP](https://gsap.com) + ScrollTrigger + SplitText, and [Lenis](https://lenis.darkroom.engineering) smooth scroll. Fonts are self-hosted.
+One-page website for **Wok Aroma**, Ground Floor, Eros Market Place, GF 80, Shakti Khand 2, Indirapuram, Ghaziabad. Built with [Astro](https://astro.build) (static output), [GSAP](https://gsap.com) + ScrollTrigger, and [Lenis](https://lenis.darkroom.engineering) smooth scroll. Fonts are self-hosted.
 
 The design is *The Rate Board*: a hand-painted shopfront, seen after dark. A steel shutter preloader lifts and stays up on a night kitchen where the wok is the only light, the menu is a lane of enamel boards on a rail, combos are posters pasted over each other, and the footer is uncovered as the page lifts away. See [`DESIGN.md`](DESIGN.md) for the system and [`PRODUCT.md`](PRODUCT.md) for the product facts it is built on.
 
@@ -52,7 +52,8 @@ These came from the Google Maps panel and a photograph of the printed menu. Noth
 ```
 src/config/        site.js, menu.js      facts
 src/components/    one file per section
-src/scripts/       preloader, hero, marquee, statement, lane, combos, curtain, ui
+src/scripts/       main (shutter + hero first), page (everything else, loaded second), held, place,
+                   preloader, hero, marquee, statement, lane, combos, curtain, play, ui
 src/styles/        base (tokens), preloader, hero, sections
 public/            fonts (subsets), icons, share image, manifest, _headers, robots.txt
 PRODUCT.md         product truth the design is built on

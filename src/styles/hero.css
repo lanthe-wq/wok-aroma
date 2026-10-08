@@ -475,6 +475,11 @@ html.preload .hero:not(.is-live) :is(.spark, .flame__flick, .jet, .ember, .steam
   color: var(--soot);
   border-bottom: 3px solid var(--chilli);
 }
+@media (hover: none), (pointer: coarse) {
+  .hero__rates-more {
+    min-height: 44px;
+  }
+}
 .hero__rates-more svg {
   width: 1em;
   height: 1em;
@@ -621,7 +626,7 @@ html.preload .hero:not(.is-live) :is(.spark, .flame__flick, .jet, .ember, .steam
   }
   .hero__rates-sub {
     margin-bottom: calc(4 * var(--u));
-    font-size: max(11px, calc(14 * var(--u)));
+    font-size: max(12px, calc(14 * var(--u)));
   }
   .hero__rates-lines {
     margin-bottom: calc(4 * var(--u));

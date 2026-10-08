@@ -1,16 +1,17 @@
-// Hero: the post-shutter reveal (the neon name flickers on, the fire catches, the signs drop in),
-// the idle loops (tossed ingredients), and a gentle scroll parallax. Sparks and the fire's
-// light are CSS, so the scene is lit without any of this.
+// Hero: the post-shutter reveal (the neon name flickers on, the fire catches, the signs drop in)
+// and the switch that lets the hero's loops run. Sparks, flames, steam and the tossed pieces are all
+// CSS, so the scene is lit without any of this; the loops are held (hero.css) while the shutter
+// covers them and while the hero is off screen, and GSAP only plays the one-off entrance.
+// The scroll parallax lives in hero-scroll.js, which needs ScrollTrigger and loads later.
 
 import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 const q = (s, r = document) => r.querySelector(s);
 const qa = (s, r = document) => [...r.querySelectorAll(s)];
 
-export function initHero({ reduced, preloading, mode }) {
+export function initHero({ reduced, preloading, mode, compact }) {
   const hero = q('.hero');
-  if (!hero) return { reveal() {} };
+  if (!hero) return { reveal() {}, live() {} };
 
   const name = q('[data-name]');
   const tagline = q('[data-tagline]');
@@ -19,52 +20,25 @@ export function initHero({ reduced, preloading, mode }) {
   const signs = qa('[data-hang]');
   const flames = qa('.flame');
   const embers = q('.wok__embers');
-  const toss = qa('.toss__inner');
+  const toss = q('.wok__toss');
   const actions = qa('[data-hero-actions] .btn, .hero__where');
 
   const animated = !reduced;
 
-  // ── Idle loops: tossed ingredients ────────────────────────────────────────
-  const loops = [];
-  if (animated) {
-    toss.forEach((el, i) => {
-      const y0 = Number(el.parentElement.dataset.y) || 100;
-      const rise = Math.min(34 + ((i * 37) % 58), Math.max(16, y0 * 0.7));
-      const drift = ((i * 53) % 44) - 22;
-      const spin = ((i * 71) % 110) - 55;
-      const half = 0.62 + (i % 4) * 0.09;
-      loops.push(
-        gsap
-          .timeline({
-            repeat: -1,
-            repeatDelay: 0.15 + (i % 3) * 0.2,
-            delay: (i * 0.23) % 1.6,
-            paused: true,
-          })
-          .to(el, { y: -rise, x: drift, rotation: spin, duration: half, ease: 'power2.out' })
-          .to(el, { y: 0, x: 0, rotation: 0, duration: half, ease: 'power2.in' }),
-      );
-    });
-
-    ScrollTrigger.create({
-      trigger: hero,
-      start: 'top bottom',
-      end: 'bottom top',
-      onToggle: (self) => loops.forEach((l) => (self.isActive && !preloading ? l.play() : l.pause())),
-    });
-
-    // Depth: the wok rises faster than the lettering as the shopfront leaves
-    gsap.to('[data-hero-art]', {
-      yPercent: -8,
-      ease: 'none',
-      scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: true },
-    });
-    gsap.to(name, {
-      yPercent: 12,
-      ease: 'none',
-      scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: true },
-    });
+  // Off screen the loops stand still (see hero.css)
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(
+      (entries) => {
+        const e = entries[entries.length - 1];
+        hero.classList.toggle('is-off', !e.isIntersecting);
+      },
+      { threshold: 0 },
+    ).observe(hero);
   }
+
+  // Loops are held until the shutter lets go of the hero (a visit with no shutter lights up at once)
+  const live = () => hero.classList.add('is-live');
+  if (!preloading) live();
 
   // ── Starting state, set while the shutter still covers everything ────────
   if (animated && preloading) {
@@ -81,17 +55,16 @@ export function initHero({ reduced, preloading, mode }) {
 
   // ── Reveal ─────────────────────────────────────────────────────────────────
   function reveal() {
+    live();
     if (!animated || !preloading) return;
 
     const tl = gsap.timeline({
       defaults: { ease: 'expo.out' },
-      onComplete: () => {
-        hero.classList.remove('is-igniting');
-        loops.forEach((l) => l.play());
-        ScrollTrigger.refresh();
-      },
+      onComplete: () => hero.classList.remove('is-igniting'),
     });
-    if (mode === 'preload-quick') tl.timeScale(1.5);
+    // phones get the same beats, a little faster
+    if (mode === 'preload-quick') tl.timeScale(compact ? 2 : 1.5);
+    else if (compact) tl.timeScale(1.45);
 
     // Tube light: the lettering comes on in stuttering steps, then holds
     const steps = [
@@ -113,10 +86,10 @@ export function initHero({ reduced, preloading, mode }) {
       .to(flames, { scaleY: 1, duration: 1.05, stagger: 0.08 }, 0.4)
       .to(embers, { opacity: 1, duration: 0.6, ease: 'power1.out' }, 1.1)
       .to(sparks, { opacity: 1, duration: 1.2, ease: 'power1.out' }, 1.0)
-      .to(toss, { opacity: 1, duration: 0.5, stagger: 0.04, ease: 'power1.out' }, 1.0)
+      .to(toss, { opacity: 1, duration: 0.9, ease: 'power1.out' }, 1.0)
       .to(signs, { y: 0, opacity: 1, duration: 1.1, stagger: 0.14 }, 0.7)
       .to(actions, { y: 0, opacity: 1, duration: 0.8, stagger: 0.08 }, 0.9);
   }
 
-  return { reveal };
+  return { reveal, live };
 }

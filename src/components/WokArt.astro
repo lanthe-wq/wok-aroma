@@ -74,6 +74,28 @@ const toss = [
   ['sesame', 206, 168],
 ];
 
+
+// Idle loops for the tossed pieces. Each piece rises, turns and falls back, then rests a beat.
+// These used to be one GSAP timeline per piece; as CSS transform animations they run off the
+// main thread, can be paused with the rest of the hero, and cost no script per frame.
+// Same numbers as before (height, drift, spin and period per piece); keyframes carry literal values
+// because keyframes that read custom properties are re-resolved on every frame.
+const tossLoops = toss.map(([, , y0], i) => {
+  const rise = Math.min(34 + ((i * 37) % 58), Math.max(16, y0 * 0.7));
+  const drift = ((i * 53) % 44) - 22;
+  const spin = ((i * 71) % 110) - 55;
+  const half = 0.62 + (i % 4) * 0.09;
+  return {
+    period: +(half * 2.5).toFixed(2),
+    delay: +(-((i * 0.23) % 1.6)).toFixed(2),
+    css:
+      `@keyframes toss-${i}{` +
+      `0%{transform:translate(0,0) rotate(0deg);animation-timing-function:cubic-bezier(.5,1,.89,1)}` +
+      `40%{transform:translate(${drift}px,${-rise}px) rotate(${spin}deg);animation-timing-function:cubic-bezier(.11,0,.5,0)}` +
+      `80%,100%{transform:translate(0,0) rotate(0deg)}}`,
+  };
+});
+const tossCss = tossLoops.map((l) => l.css).join('');
 ---
 
 <svg
@@ -83,6 +105,8 @@ const toss = [
   aria-hidden="true"
   focusable="false"
 >
+  <style is:inline set:html={tossCss}></style>
+
   <!-- Steam: aroma rising off the rim, three curls a side -->
   <g class="wok__steam" fill="none" stroke="#fbf6e8" stroke-width="9" stroke-linecap="round">
     <path class="steam" style="--sd: 0s" d="M118 196c-20-26 20-46 0-74s20-48 0-76" />
@@ -97,25 +121,13 @@ const toss = [
   <g class="wok__flames">
     {
       tongues.map(([x, w, h, lean, dur, delay]) => (
-        <g class="flame" style={`--fd: ${dur}s; --fl: ${delay}s`}>
-          <path class="flame__shape" fill="var(--flame-red)" d={flame(x, base, w, h, lean)} />
-          <path
-            class="flame__shape"
-            fill="var(--flame-orange)"
-            d={flame(x, base, w * 0.7, h * 0.74, lean * 0.7)}
-          />
-          <path
-            class="flame__shape"
-            fill="var(--flame-yellow)"
-            d={flame(x, base, w * 0.42, h * 0.46, lean * 0.45)}
-          />
-          {w > 40 && (
-            <path
-              class="flame__shape"
-              fill="#fff3c4"
-              d={flame(x, base, w * 0.18, h * 0.24, lean * 0.2)}
-            />
-          )}
+        <g class="flame">
+          <g class="flame__flick" style={`--fd: ${dur}s; --fl: ${delay}s`}>
+            <path fill="var(--flame-red)" d={flame(x, base, w, h, lean)} />
+            <path fill="var(--flame-orange)" d={flame(x, base, w * 0.7, h * 0.74, lean * 0.7)} />
+            <path fill="var(--flame-yellow)" d={flame(x, base, w * 0.42, h * 0.46, lean * 0.45)} />
+            {w > 40 && <path fill="#fff3c4" d={flame(x, base, w * 0.18, h * 0.24, lean * 0.2)} />}
+          </g>
         </g>
       ))
     }
@@ -255,11 +267,17 @@ const toss = [
 
   <g class="wok__jets">
     {
-      jets.map((x, i) => (
-        <g class="jet" style={`--jd: ${0.5 + (i % 3) * 0.12}s; --jl: ${(i % 4) * 0.07}s`}>
-          <path fill="var(--gas-blue)" d={flame(x, 442, 9, i % 2 ? 26 : 32, 0)} />
-          <path fill="#b9d6ff" d={flame(x, 442, 5.5, i % 2 ? 16 : 20, 0)} />
-          <path fill="#e3f0ff" d={flame(x, 442, 3, 9, 0)} />
+      [0, 1, 2].map((k) => (
+        <g class="jet" style={`--jd: ${0.5 + k * 0.12}s; --jl: ${k * 0.09}s`}>
+          {jets.map((x, i) =>
+            i % 3 === k ? (
+              <g>
+                <path fill="var(--gas-blue)" d={flame(x, 442, 9, i % 2 ? 26 : 32, 0)} />
+                <path fill="#b9d6ff" d={flame(x, 442, 5.5, i % 2 ? 16 : 20, 0)} />
+                <path fill="#e3f0ff" d={flame(x, 442, 3, 9, 0)} />
+              </g>
+            ) : null,
+          )}
         </g>
       ))
     }
@@ -396,9 +414,9 @@ const toss = [
   <!-- Tossed ingredients (their loops are driven by GSAP) -->
   <g class="wok__toss">
     {
-      toss.map(([kind, x, y]) => (
+      toss.map(([kind, x, y], i) => (
         <g class="toss" data-toss data-y={y} data-kind={kind} transform={`translate(${x} ${y})`}>
-          <g class="toss__inner">
+          <g class="toss__inner" style={`animation-name: toss-${i}; animation-duration: ${tossLoops[i].period}s; animation-delay: ${tossLoops[i].delay}s`}>
             {kind === 'scallion' && (
               <g>
                 <circle r="9" fill="none" stroke="#2e8b3e" stroke-width="5" />
@@ -458,8 +476,11 @@ const toss = [
     overflow: visible;
   }
 
-  /* .flame and .toss__inner are driven by GSAP; the shapes inside animate in CSS */
-  .flame__shape {
+  /* Every loop below is a transform or opacity animation, which the browser can run without the
+     page's script (a stroke-dashoffset or filter loop is repainted on the main thread every frame).
+     One animation per flame tongue, per group of jets and per piece, not per painted layer.
+     hero.css pauses all of them while the shutter covers the hero and while it is off screen. */
+  .flame__flick {
     transform-box: fill-box;
     transform-origin: 50% 100%;
     animation: flicker var(--fd, 1s) ease-in-out var(--fl, 0s) infinite;
@@ -471,9 +492,7 @@ const toss = [
   }
   .steam {
     stroke-dasharray: 78 46;
-    animation:
-      steam-flow 3.6s linear var(--sd, 0s) infinite,
-      steam-fade 3.6s ease-in-out var(--sd, 0s) infinite;
+    animation: steam-rise 3.6s ease-out var(--sd, 0s) infinite;
   }
   .steam--thin {
     stroke-width: 6;
@@ -482,6 +501,13 @@ const toss = [
     transform-box: fill-box;
     transform-origin: 50% 50%;
     animation: ember 2.4s ease-out var(--ed, 0s) infinite;
+  }
+  /* the tossed pieces: each has its own keyframes (generated above); GSAP only fades them in */
+  .toss__inner {
+    transform-box: fill-box;
+    transform-origin: 50% 50%;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
   }
   @keyframes flicker {
     0%,
@@ -504,18 +530,18 @@ const toss = [
       transform: scaleY(0.8);
     }
   }
-  @keyframes steam-flow {
-    to {
-      stroke-dashoffset: -124;
+  /* aroma rises off the rim and thins out */
+  @keyframes steam-rise {
+    0% {
+      transform: translateY(16px);
+      opacity: 0;
     }
-  }
-  @keyframes steam-fade {
-    0%,
-    100% {
-      opacity: 0.2;
-    }
-    50% {
+    30% {
       opacity: 0.75;
+    }
+    100% {
+      transform: translateY(-22px);
+      opacity: 0;
     }
   }
   @keyframes ember {
@@ -532,10 +558,22 @@ const toss = [
     }
   }
 
+  /* Phones and touch screens: the same fire with fewer moving parts */
+  @media (hover: none), (max-width: 899px) {
+    .ember:nth-child(n + 5) {
+      display: none;
+    }
+    .toss:nth-child(3n),
+    .toss:nth-child(n + 19) {
+      display: none;
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
-    .flame__shape,
+    .flame__flick,
     .jet,
-    .steam {
+    .steam,
+    .toss__inner {
       animation: none;
     }
     .steam {

@@ -25,6 +25,9 @@ html.preload body {
   position: absolute;
   inset: 0;
   background: var(--shutter);
+  /* it is carried up and rattled by script: keep it on its own layer so the corrugation is
+     painted once, not on every frame of the lift (the shutter is removed when it is done) */
+  will-change: transform;
 }
 
 /* Corrugated slats: steel catching light on its upper curve */
@@ -156,4 +159,16 @@ html.preload .actions {
 }
 html.preload .nav {
   transform: translateY(-100%);
+}
+
+/* Phones: behind the shutter only the hero is laid out. The sections below it are held back
+   (held.js lets them in one at a time, then the shutter lifts), because laying out the whole
+   page in one go is the longest task a phone has. display: none rather than content-visibility:
+   a skipped section that grows is reported as a layout shift, one that appears is not.
+   Gone with html.preload, so a stalled script cannot leave anything held. */
+@media (hover: none), (max-width: 899px) {
+  html.preload main > :not(.hero):not(.is-ready),
+  html.preload .footer:not(.is-ready) {
+    display: none;
+  }
 }

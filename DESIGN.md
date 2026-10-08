@@ -249,7 +249,7 @@ Segmented control, 48px high, 3px frame; the 3px dividers are gaps showing the f
 Sticky poster with a 6px soot frame, 14px corners, four rivets and a rotated turmeric price roundel. As the next slab arrives the one beneath scales to 0.94 and darkens (a shade layer, not a filter).
 
 ### Navigation
-A 52px soot bar with the wordmark appearing after the hero scrolls away, three section links with turmeric underline for the current one, and a Chilli call chip. On phones it appears only after the hero.
+A 52px soot bar with the brand (the neon wok mark, a steady tube-light sign, beside the wordmark) appearing after the hero scrolls away, three section links with turmeric underline for the current one, and a Chilli call chip. On phones it appears only after the hero.
 
 ### Preloader (signature)
 A corrugated shutter in Shutter Green with the shop number and a Hindi line painted on it and a Chilli plate counting real load progress with plain status lines. On completion it lifts in two stages, with a rattle, revealing the night kitchen while the neon name flickers on.

@@ -41,7 +41,7 @@ These came from the Google Maps panel and a photograph of the printed menu. Noth
 
 ## Still needed from the owner
 
-- The logo file (the flame over a wok). The wok on the page is a flat vector stand-in; the logo can replace it in `src/components/WokArt.astro`.
+- The owner's own printed logo (the flame over a wok), if they want it used. The site currently carries the neon-wok mark described under "Logo and favicon" below.
 - Real photographs of the dishes. The design is built to work without any; photos can be added to the rate list or combo slabs.
 - The Instagram handle and the Swiggy and Zomato store links, in `src/config/site.js`.
 - The live domain: set `site` in `astro.config.mjs`. It feeds the canonical URL and the share image URL (`public/og.png`, 1200×630).
@@ -55,8 +55,9 @@ src/components/    one file per section
 src/scripts/       main (shutter + hero first), page (everything else, loaded second), held, place,
                    preloader, hero, marquee, statement, lane, combos, curtain, play, ui
 src/styles/        base (tokens), preloader, hero, sections, play
-scripts/           build-fonts.py (rebuilds public/fonts from the Fontsource packages)
-public/            fonts (subsets), icons, share image, manifest, _headers, robots.txt
+scripts/           build-fonts.py (rebuilds public/fonts from the Fontsource packages),
+                   build-icons.mjs (rebuilds favicon.ico and the app icons from public/favicon.svg)
+public/            fonts (subsets), favicon and icons, share image, manifest, _headers, robots.txt
 PRODUCT.md         product truth the design is built on
 DESIGN.md          the visual system
 .impeccable/       the design direction record and sidecar
@@ -116,21 +117,25 @@ To add Hindi characters or words you want to be certain are stacked, add them to
 - `public/manifest.webmanifest` and the icons make "Add to home screen" work (standalone window, dark splash). It repeats the business name, so change it there too if the name ever changes.
 - `<meta name="color-scheme" content="dark">` declares the page dark, so browsers use dark scrollbars and form controls and leave it out of automatic page darkening. A screenshot of the whole page at 390 and 1440 wide is pixel-identical with and without it.
 - No `rel="preconnect"` anywhere: nothing is loaded from another origin. No sitemap and no `Sitemap:` line in `robots.txt` until the real domain is set in `astro.config.mjs`.
-- Icons are rendered from `public/favicon.svg` with sharp (`apple-touch-icon.png` is square and full-bleed; the maskable icon keeps the art inside the safe zone). If the favicon changes, rerun:
+- Every icon is rendered from `public/favicon.svg` by `scripts/build-icons.mjs` (sharp, which comes with Astro). If the favicon changes, rerun it from the project root:
 
   ```bash
-  node -e "
-  const sharp = require('sharp'), fs = require('fs');
-  const svg = fs.readFileSync('public/favicon.svg', 'utf8');
-  const art = svg.replace(/^[\s\S]*?<rect[^>]*\/>/, '').replace('</svg>', '');
-  const square = svg.replace(' rx=\"12\"', '');
-  const maskable = '<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 64 64\"><rect width=\"64\" height=\"64\" fill=\"#f4b400\"/><g transform=\"translate(32 32) scale(0.7) translate(-32 -32)\">' + art + '</g></svg>';
-  for (const [f, s, n] of [['apple-touch-icon', square, 180], ['icon-192', svg, 192], ['icon-512', svg, 512], ['icon-maskable-512', maskable, 512]])
-    sharp(Buffer.from(s), { density: 72 * n / 64 }).resize(n, n).png({ palette: true, colours: 32, effort: 10 }).toFile('public/' + f + '.png');
-  "
+  node scripts/build-icons.mjs
   ```
 
+  It writes `favicon.ico` (16, 32 and 48 px), `apple-touch-icon.png` (180 px, square and full-bleed, because iOS rounds the corners itself), `icon-192.png` and `icon-512.png` (rounded, for "any") and `icon-maskable-512.png` (full-bleed, with the art scaled into the safe zone, because the OS cuts its own shape).
+
 - `public/og.png` was 338 KB and is now 116 KB at the same 1200×630: a 256-colour palette with dithering (`sharp(file).png({ palette: true, quality: 90, colours: 256, dither: 1, effort: 10 })`). Do the same after re-rendering it.
+
+### Logo and favicon
+
+The mark is a neon-sign wok: steam in amber over a red wok, lit like a tube sign (logo direction 1c; red `#ff4c4d`, amber `#ffbf3b` on `#0d0807`).
+
+- **Favicon and app icons**: `public/favicon.svg` is the small-size cut of the mark (heavier tubes and a single drip, so it survives 16px). `favicon.svg` is the source for the icons above; the head lists the `.ico` first and the SVG second, so browsers that can use the SVG do.
+- **Nav**: `src/components/LogoMark.astro` is the same art inlined (no request), shown beside the name. The glow is drawn inside the SVG, steady, and counts as a tube-light sign under the Fire Light Rule in `DESIGN.md`. Below 350px the name drops out and the mark stands alone, so the bar never runs under the call chip.
+- **Footer**: `public/logo-symbol.svg` (the full mark, with three flames under the wok) sits above "The shutter stays up." as a plain `<img>` at a fixed 5rem height. Keep it small: the footer is 565px tall on desktop and `curtain.js` falls back to a plain block once it passes 92% of the viewport height, which on a 1366×657 window is 604px. A bigger mark, or the full lockup, would switch the curtain reveal off on short laptop screens.
+- **Not on the page**: the hero name stays Yatra One in neon cream, and the hero wok (`WokArt.astro`) stays the animated flat vector, because the logo's own lettering is a different face (Kaushan Script) and a still line drawing cannot replace the flaming wok. The full lockup (script wordmark and tagline pill) is not placed anywhere; it needs a hero or footer redesign, not a drop-in.
+- The logo pack's PNG and SVG files carry an embedded C2PA manifest (about 5.7 KB each). It is left out of everything in `public/`: the two SVGs were stripped and every PNG here is re-rendered from `favicon.svg`.
 
 ### Caching
 

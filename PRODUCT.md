@@ -44,7 +44,7 @@ Hidden or marked until supplied: Instagram handle (Maps lists Instagram but not 
 
 ## Brand Commitments
 
-- Name: Wok Aroma. The owner's lettering is an orange-to-red italic script with a white outline; the logo is a flame over a wok with chopsticks and noodles, in red, black and gold. The logo file was not supplied, so the site uses a typographic wordmark until it is.
+- Name: Wok Aroma. The owner's lettering is an orange-to-red italic script with a white outline; the logo is a flame over a wok with chopsticks and noodles, in red, black and gold. That printed logo file was not supplied. The site's mark is a separate neon-sign wok (steam over a wok, lit like a tube sign), used as the favicon and beside the name in the nav; the hero keeps its typographic neon name.
 - Their own words may be used: "Authentic Crazy Chinese Food", "Savor the Flavors".
 - Green for veg, red for non-veg, as in the owner's menu.
 - Binding request: an award-calibre preloader and scroll animations, researched against real award-winning sites.
@@ -52,7 +52,7 @@ Hidden or marked until supplied: Instagram handle (Maps lists Instagram but not 
 ## Evidence on Hand
 
 - Owner-supplied: the Maps panel and printed menu above (images in the session, not on disk), and the Maps URL.
-- Absent and not to be fabricated: dish photographs (the printed menu holds a few; not on disk), ratings and reviews, awards, founding story, staff names, Instagram handle, Swiggy and Zomato store links, the logo file.
+- Absent and not to be fabricated: dish photographs (the printed menu holds a few; not on disk), ratings and reviews, awards, founding story, staff names, Instagram handle, Swiggy and Zomato store links, the owner's printed logo file.
 - Web search found other restaurants called Wok Aroma in England and unrelated Indirapuram wok restaurants (Let's Wok, Chinese Wok, Wok Of Asia). None of their details were used. A local guide page mentions an Eros Market Place Wok Aroma discount of 25% from 11:00 to 18:00; it is undated, so the site does not repeat it.
 
 ## Product Principles

@@ -7,7 +7,7 @@
 
 .statement {
   position: relative;
-  padding: clamp(5rem, 12vw, 10rem) clamp(1rem, 4vw, 3rem);
+  padding: clamp(5rem, 12vw, 10rem) var(--gutter);
   color: var(--enamel);
   background:
     var(--slats),
@@ -35,7 +35,10 @@
   align-items: center;
   gap: 0.5rem;
   width: fit-content;
-  margin: var(--s-7) auto 0;
+  /* the extra 4px of padding makes the target 44px tall; the margin gives it back, so nothing moves */
+  margin: calc(var(--s-7) - 4px) auto 0;
+  padding-top: 4px;
+  min-height: 44px;
   max-width: 17em;
   font-family: var(--font-board);
   font-weight: 700;
@@ -113,8 +116,10 @@
   background: var(--shutter);
   transition: background-color 0.2s var(--ease-out), color 0.2s var(--ease-out);
 }
-.filter button:hover {
-  background: var(--shutter-hover);
+@media (hover: hover) {
+  .filter button:hover {
+    background: var(--shutter-hover);
+  }
 }
 .filter button[aria-pressed='true'] {
   color: var(--soot);
@@ -138,6 +143,7 @@
   display: flex;
   gap: var(--s-1) var(--s-5);
   overflow-x: auto;
+  overscroll-behavior-x: contain; /* a flick along the chips never turns into a page swipe */
   scrollbar-width: none;
 }
 .lane__ruler-track::-webkit-scrollbar {
@@ -156,8 +162,10 @@
   border-bottom: 4px solid transparent;
   transition: color 0.2s var(--ease-out), border-color 0.2s var(--ease-out);
 }
-.lane__ruler a:hover {
-  color: var(--enamel);
+@media (hover: hover) {
+  .lane__ruler a:hover {
+    color: var(--enamel);
+  }
 }
 .lane__ruler a[aria-current='true'] {
   color: var(--turmeric);
@@ -540,6 +548,7 @@
   grid-template-columns: auto minmax(0, 1fr);
   align-items: center;
   gap: var(--s-7);
+  min-height: min(68vh, 26rem);
   min-height: min(68svh, 26rem);
   margin-bottom: var(--s-6);
   padding: var(--s-7);
@@ -817,6 +826,10 @@
   font-weight: 600;
   font-size: var(--step-1);
 }
+.visit__facts a {
+  white-space: nowrap;
+  padding-block: 0.5rem; /* inline, so it makes the target 44px without moving a line */
+}
 .visit__facts small {
   font-weight: 400;
   font-size: 0.82em;
@@ -869,6 +882,8 @@
 .footer__sub a {
   font-weight: 700;
   color: var(--turmeric);
+  white-space: nowrap; /* a phone number never breaks across two lines */
+  padding-block: 0.5rem; /* inline, so it makes the target 44px without moving a line */
 }
 .footer__links {
   display: flex;
@@ -888,6 +903,10 @@
   text-transform: uppercase;
   text-decoration: none;
   border-bottom: 3px solid var(--turmeric);
+  /* 10px of padding makes the target 44px tall; the negative margin gives it back, so nothing moves */
+  padding-top: 10px;
+  margin-top: -10px;
+  min-height: 44px;
 }
 .footer__top svg {
   width: 1.1em;
@@ -924,7 +943,8 @@
     display: grid;
     grid-template-columns: 1fr 1.4fr 1.3fr;
     gap: 0.5rem;
-    padding: 0.5rem 0.5rem calc(0.5rem + env(safe-area-inset-bottom));
+    /* clear of the home indicator below and of any landscape cutout at the sides */
+    padding: 0.5rem max(0.5rem, var(--safe-r)) calc(0.5rem + var(--safe-b)) max(0.5rem, var(--safe-l));
     background: var(--soot);
     transition: transform 0.5s var(--ease-out);
   }
@@ -933,6 +953,7 @@
     align-items: center;
     justify-content: center;
     gap: 0.4rem;
+    min-width: 0;
     min-height: 48px;
     font-family: var(--font-board);
     font-weight: 700;
@@ -960,8 +981,38 @@
     color: var(--soot);
     background: var(--turmeric);
   }
+  .actions a:active {
+    transform: translateY(1px);
+  }
+  /* the page ends clear of the bar, whatever sits under it */
   .footer {
-    padding-bottom: 4.5rem;
+    padding-bottom: calc(4.5rem + var(--safe-b));
+  }
+}
+/* Narrow phones: the three labels still fit their plates with room to spare */
+@media (max-width: 374px) {
+  .actions {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr) minmax(0, 1.35fr);
+  }
+  .actions a {
+    gap: 0.3rem;
+    font-size: 1.05rem;
+    letter-spacing: 0.02em;
+  }
+}
+@media (max-width: 339px) {
+  .actions svg {
+    display: none; /* the words carry it; the plates keep room to breathe */
+  }
+}
+/* Phones on their side: a slimmer bar, so it does not eat a third of the screen */
+@media (max-width: 759px) and (max-height: 479px) {
+  .actions {
+    padding-top: 0.25rem;
+    padding-bottom: calc(0.25rem + var(--safe-b));
+  }
+  .actions a {
+    min-height: 44px;
   }
 }
 
@@ -1022,5 +1073,122 @@
   }
   .lane__track {
     columns: 1;
+  }
+}
+
+/* Small phones: the momo grid has to fit a 300px screen, so the board gives up a little padding, the
+   diet mark sits above each filling name instead of beside it, and the numbers tighten a step */
+@media (max-width: 370px) {
+  .board__sway {
+    padding-inline: 1.1em;
+  }
+  .grid--tall thead th .mark {
+    display: block;
+    margin: 0 0 0.15em auto;
+  }
+}
+@media (max-width: 319px) {
+  .grid--tall {
+    font-size: 0.9em;
+  }
+}
+@media (max-width: 289px) {
+  .grid--tall {
+    font-size: 0.8em;
+  }
+}
+/* The two-column stack on a portrait tablet makes boards about as narrow as a phone's */
+@media (min-width: 760px) and (max-width: 799px) {
+  .board__sway {
+    padding-inline: 1.1em;
+  }
+}
+
+/* Short screens (phones on their side). The boxes that stick would otherwise cover most of the view,
+   or stick with their lower half out of reach, so they scroll with the page instead. */
+@media (max-width: 899px) and (max-height: 699px) {
+  .slab {
+    position: relative;
+    top: auto;
+  }
+}
+@media (max-width: 759px) and (max-height: 479px) {
+  .lane__ruler {
+    position: static;
+  }
+}
+
+/* ── Nav on phones and tablets ────────────────────────────────────────────────
+   The bar itself is styled in hero.css; these rules keep it on one line at 300px, add the status-area
+   inset, and bring every target in it up to 44px. */
+
+.nav {
+  padding-top: var(--safe-t);
+}
+.nav__brand,
+.nav__call,
+.nav__links a {
+  white-space: nowrap;
+}
+.nav__brand {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+}
+@media (max-width: 379px) {
+  .nav {
+    gap: var(--s-3);
+  }
+  .nav__brand {
+    font-size: 1.3rem;
+  }
+  .nav__call {
+    gap: 0.4rem;
+    padding-inline: 0.7rem;
+    font-size: 1.1rem;
+  }
+}
+@media (max-width: 319px) {
+  .nav__call svg {
+    display: none; /* the number says what it is; "Call" stays for screen readers */
+  }
+}
+/* Touch targets in the bar. Mouse-driven desktops keep the slimmer chip and links. */
+@media (pointer: coarse), (max-width: 1023px) {
+  .nav__call {
+    min-height: 44px;
+  }
+  .nav__links a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+}
+
+/* ── Pressed, not hovered ─────────────────────────────────────────────────── */
+
+.nav__call:active,
+.filter button:active,
+.lane__ruler a:active,
+.statement__link:active,
+.footer__top:active {
+  transform: translateY(1px);
+}
+
+/* On a screen that cannot hover, a tap must not leave a hover state behind. These undo the hover
+   rules written in hero.css; once those sit inside (hover: hover) this block can go. */
+@media (hover: none) {
+  .nav__links a:hover:not([aria-current='true']) {
+    color: inherit;
+    border-color: transparent;
+  }
+  .nav__call:hover {
+    background: var(--chilli);
+  }
+  .hero__rates-more:hover {
+    color: var(--soot);
+  }
+  .hero .btn--ink:hover {
+    --btn-bg: var(--turmeric);
   }
 }

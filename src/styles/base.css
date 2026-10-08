@@ -73,9 +73,16 @@
   --s-8: 4.5rem;
   --s-9: clamp(4.5rem, 9vw, 8rem);
 
-  --gutter: clamp(1rem, 4vw, 3rem);
+  /* Notches and home indicators (the viewport is viewport-fit=cover). Zero wherever a screen has none. */
+  --safe-t: env(safe-area-inset-top, 0px);
+  --safe-r: env(safe-area-inset-right, 0px);
+  --safe-b: env(safe-area-inset-bottom, 0px);
+  --safe-l: env(safe-area-inset-left, 0px);
+
+  /* Side gutters never fall under a landscape cutout */
+  --gutter: max(clamp(1rem, 4vw, 3rem), var(--safe-l), var(--safe-r));
   --radius: 8px;
-  --nav-h: 52px;
+  --nav-h: calc(52px + var(--safe-t)); /* the bar itself is 52px; anything above it is the status area */
 
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
@@ -94,6 +101,8 @@ html {
   text-size-adjust: 100%;
   scrollbar-color: var(--chilli) var(--soot);
   scrollbar-width: thin;
+  /* one tap feedback everywhere: the pressed state of each control, never the browser's grey flash */
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
@@ -158,6 +167,15 @@ button {
   border: 0;
   padding: 0;
   cursor: pointer;
+}
+
+/* A tap is a tap: no double-tap-to-zoom wait on anything you can press */
+a,
+button,
+summary,
+label,
+[role='button'] {
+  touch-action: manipulation;
 }
 
 /* Browser surfaces: themed from the palette, not left to defaults */
@@ -237,8 +255,11 @@ button {
   -webkit-tap-highlight-color: transparent;
 }
 
-.btn:hover {
-  transform: translateY(-2px);
+/* Hover states belong to devices that hover; on touch they would stay lit after a tap */
+@media (hover: hover) {
+  .btn:hover {
+    transform: translateY(-2px);
+  }
 }
 .btn:active {
   transform: translateY(1px);
@@ -253,8 +274,10 @@ button {
   min-height: 68px;
   padding: 0.6rem var(--s-5);
 }
-.btn--call:hover {
-  --btn-bg: var(--chilli-deep);
+@media (hover: hover) {
+  .btn--call:hover {
+    --btn-bg: var(--chilli-deep);
+  }
 }
 .btn--call .btn__small {
   font-size: 1rem;
@@ -270,12 +293,13 @@ button {
   --btn-bg: var(--soot);
   --btn-fg: var(--turmeric);
 }
-.btn--ink:hover {
-  --btn-bg: var(--soot-2);
-}
-
-.btn--paper:hover {
-  --btn-bg: var(--turmeric);
+@media (hover: hover) {
+  .btn--ink:hover {
+    --btn-bg: var(--soot-2);
+  }
+  .btn--paper:hover {
+    --btn-bg: var(--turmeric);
+  }
 }
 
 .btn svg {

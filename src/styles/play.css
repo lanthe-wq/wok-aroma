@@ -1,0 +1,206 @@
+/* ───────────────────────────────────────────────────────────────────────────
+   Play · small delights, each a mechanism of the shopfront
+   The wok answers a tap, price roundels are stamped on, a marker runs along the
+   rate list, and the order rides the dotted road. Transform and opacity only.
+   Everything reads as finished without JavaScript or with reduced motion;
+   play.js only sets up the "before" state when it is going to run the animation.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+/* ── The wok answers a tap (hero) ──────────────────────────────────────────── */
+
+/* Only painted shapes catch the pointer, so empty corners of the drawing never
+   swallow a tap meant for a sign or a button. play.js adds .is-tossable. */
+.hero__art.is-tossable .wok * {
+  pointer-events: auto;
+  cursor: pointer;
+}
+.hero__art.is-tossable {
+  pointer-events: none;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+/* ── Price roundel: stamped on as the poster is pasted ─────────────────────── */
+
+.slab__price {
+  position: relative;
+}
+/* the ring an inked stamp leaves as it lands */
+.slab__price::after {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border: 4px solid var(--slab-fg, currentColor);
+  border-radius: 50%;
+  opacity: 0;
+  pointer-events: none;
+}
+.slab__price.is-stamped::after {
+  animation: stamp-ring 0.7s var(--ease-out) both;
+}
+@keyframes stamp-ring {
+  0% {
+    transform: scale(0.96);
+    opacity: 0.55;
+  }
+  100% {
+    transform: scale(1.38);
+    opacity: 0;
+  }
+}
+
+/* ── Rate list: a marker runs under the row you are reading ────────────────── */
+
+/* A turmeric marker swept across the row. List rows carry it on the row; the momo
+   tables carry it cell by cell (a pseudo-element on a table row would become a
+   column), each cell a beat after the last, so it still reads as one stroke. */
+@media (hover: hover) and (pointer: fine) {
+  .row,
+  .grid tbody :is(th, td) {
+    position: relative;
+  }
+  .row::before,
+  .grid tbody :is(th, td)::before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    background: var(--turmeric);
+    transform: scaleX(0);
+    transform-origin: 0 50%;
+    transition: transform 0.4s var(--ease-out);
+    pointer-events: none;
+  }
+  .row::before {
+    inset: 0.04em -0.4em;
+    border-radius: 3px;
+  }
+  .grid tbody :is(th, td)::before {
+    inset: 0;
+    transition-duration: 0.28s;
+    transition-delay: calc(var(--c, 0) * 40ms);
+  }
+  .grid tbody tr > :nth-child(2) {
+    --c: 1;
+  }
+  .grid tbody tr > :nth-child(3) {
+    --c: 2;
+  }
+  .grid tbody tr > :nth-child(4) {
+    --c: 3;
+  }
+  .grid tbody tr > :nth-child(5) {
+    --c: 4;
+  }
+  .grid tbody tr > :nth-child(6) {
+    --c: 5;
+  }
+  .row:hover::before,
+  .grid tbody tr:hover > *::before {
+    transform: scaleX(1);
+  }
+  /* the name leans into the marker */
+  .row__name {
+    transition: transform 0.4s var(--ease-out);
+  }
+  .row:hover .row__name {
+    transform: translateX(0.18em);
+  }
+  /* the dimmed (filtered-out) rows stay quiet */
+  .lane[data-filter='veg'] :is(.row, .grid tbody th, .grid tbody td)[data-diet='nonveg']::before,
+  .lane[data-filter='nonveg'] :is(.row, .grid tbody th, .grid tbody td)[data-diet='veg']::before,
+  .lane[data-filter='veg'] .grid__row[data-diet='nonveg'] > *::before,
+  .lane[data-filter='nonveg'] .grid__row[data-diet='veg'] > *::before {
+    display: none;
+  }
+}
+/* the marker still marks, it just does not travel */
+@media (prefers-reduced-motion: reduce) {
+  .row::before,
+  .grid tbody :is(th, td)::before,
+  .row__name {
+    transition: none;
+  }
+}
+
+/* ── Delivery: the order rides the dotted road, shop to door ───────────────── */
+
+.route {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--s-1) var(--s-3);
+  max-width: 30rem;
+  margin-top: var(--s-5);
+}
+.route__end {
+  padding: 0.2rem 0.7rem 0.1rem;
+  font-family: var(--font-board);
+  font-weight: 700;
+  font-size: 1.15rem;
+  line-height: 1.2;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--soot);
+  background: var(--enamel);
+  border: 3px solid var(--soot);
+  border-radius: 3px;
+}
+.route__road {
+  position: relative;
+  height: 2.6rem;
+}
+/* a dotted leader, as on the rate boards; the road slides in under this clip */
+.route__line {
+  position: absolute;
+  inset: calc(50% - 2px) 0 auto 0;
+  height: 4px;
+  overflow: hidden;
+}
+.route__line i {
+  display: block;
+  height: 0;
+  border-top: 4px dotted var(--turmeric);
+}
+.route__km {
+  grid-column: 2;
+  grid-row: 2;
+  text-align: center;
+  font-family: var(--font-board);
+  font-weight: 600;
+  font-size: 1.05rem;
+  line-height: 1;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--turmeric);
+}
+/* the hot order: a flame on a chilli roundel. At rest it has arrived at the door. */
+.route__runner {
+  position: absolute;
+  left: calc(100% - 1.1rem);
+  top: 50%;
+  display: grid;
+  place-items: center;
+  width: 2.2rem;
+  height: 2.2rem;
+  translate: -50% -50%;
+  color: var(--turmeric);
+  background: var(--chilli);
+  border: 3px solid var(--soot);
+  border-radius: 50%;
+}
+.route__runner svg {
+  width: 0.7rem;
+  height: 0.95rem;
+}
+@media (max-width: 559px) {
+  .route {
+    gap: var(--s-1) var(--s-2);
+  }
+  .route__end {
+    padding: 0.2rem 0.5rem 0.1rem;
+    font-size: 1rem;
+    letter-spacing: 0.06em;
+  }
+}

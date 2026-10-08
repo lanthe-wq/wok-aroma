@@ -266,29 +266,19 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: calc(22 * var(--u));
   font-family: var(--font-board);
   font-weight: 600;
   font-size: max(15px, calc(30 * var(--u)));
   line-height: 1;
   letter-spacing: 0.34em;
+  /* letter-spacing trails the last glyph; offset it so the text sits dead centre */
+  padding-left: 0.34em;
   text-transform: uppercase;
   color: #ffe9c2;
   text-shadow:
     0 0 3px #fff,
     0 0 12px rgb(255 122 26 / 0.9),
     0 0 28px rgb(232 52 28 / 0.7);
-}
-.hero__tag::before,
-.hero__tag::after {
-  content: '';
-  width: calc(120 * var(--u));
-  height: max(2px, calc(3 * var(--u)));
-  background: #ffe9c2;
-  border-radius: 2px;
-  box-shadow:
-    0 0 6px #fff,
-    0 0 16px rgb(255 122 26 / 0.9);
 }
 
 .hero__name {
@@ -557,13 +547,9 @@
   }
   .hero__tag {
     inset: calc(34 * var(--u)) 0 auto 0;
-    gap: calc(10 * var(--u));
     font-size: max(12px, calc(17 * var(--u)));
     letter-spacing: 0.2em;
-  }
-  .hero__tag::before,
-  .hero__tag::after {
-    width: calc(26 * var(--u));
+    padding-left: 0.2em;
   }
   .hero__name {
     inset: calc(60 * var(--u)) 0 auto 0;

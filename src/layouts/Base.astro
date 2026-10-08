@@ -1,14 +1,10 @@
 ---
+import { createHash } from 'node:crypto';
+import { existsSync, readFileSync } from 'node:fs';
+import { resolve, sep } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { site } from '../config/site.js';
 
-// Fonts are self-hosted via Fontsource: no third-party requests at runtime.
-import '@fontsource/yatra-one/latin-400.css';
-import '@fontsource/yatra-one/latin-ext-400.css';
-import '@fontsource/yatra-one/devanagari-400.css';
-import '@fontsource-variable/teko/wght.css';
-import '@fontsource/hind/latin-400.css';
-import '@fontsource/hind/latin-600.css';
-import '@fontsource/hind/latin-700.css';
 import 'lenis/dist/lenis.css';
 
 import '../styles/base.css';
@@ -17,11 +13,49 @@ import '../styles/hero.css';
 import '../styles/sections.css';
 import '../styles/play.css';
 
-import yatraLatin from '@fontsource/yatra-one/files/yatra-one-latin-400-normal.woff2?url';
-import tekoLatin from '@fontsource-variable/teko/files/teko-latin-wght-normal.woff2?url';
-
 const { title, description } = Astro.props;
 const canonical = new URL('/', Astro.site).href;
+
+// Fonts are self-hosted subsets in public/fonts (see "Fonts" in the README): no
+// third-party requests at runtime. Each URL carries a hash of its file, so the
+// one-year immutable cache in public/_headers can never serve a stale font.
+// The page is compiled into .astro/.prerender/chunks, so the project root is the working directory
+// (npm scripts always run there) or, failing that, whatever sits above that .astro folder. If the
+// fonts cannot be found the build stops: an unhashed URL under a year-long immutable cache would
+// serve a stale font after any edit, and nobody would see why.
+const fontDir = [process.cwd(), fileURLToPath(import.meta.url).split(`${sep}.astro${sep}`)[0]]
+  .map((root) => resolve(root, 'public/fonts'))
+  .find((dir) => existsSync(dir));
+if (!fontDir) throw new Error('Base.astro: public/fonts not found. Run the build from the project root.');
+const font = (file) => {
+  const bytes = readFileSync(resolve(fontDir, file));
+  return `/fonts/${file}?v=${createHash('sha1').update(bytes).digest('hex').slice(0, 8)}`;
+};
+const yatraLatin = font('yatra-one-latin.woff2');
+const yatraDeva = font('yatra-one-devanagari.woff2');
+const tekoLatin = font('teko-latin.woff2');
+const tekoRupee = font('teko-rupee.woff2');
+const hind400 = font('hind-400.woff2');
+const hind600 = font('hind-600.woff2');
+
+// Each family is split by unicode-range, so a face is only fetched when the page
+// has text in it. Latin faces cover Basic Latin, Latin-1 letters, the typographic
+// punctuation in the copy and the rupee sign; Devanagari only loads for Hindi.
+// The preloader asks for each family's space glyph, which only the Latin face has.
+const LATIN =
+  'U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-200B,U+200E-206F,U+20AC,U+2122,U+2212,U+2215';
+const face = (family, weight, src, range) =>
+  `@font-face{font-family:'${family}';font-style:normal;font-weight:${weight};font-display:swap;` +
+  `src:url(${src}) format('woff2');unicode-range:${range}}`;
+const fontCss = [
+  face('Yatra One', 400, yatraLatin, `${LATIN},U+20B9`),
+  face('Yatra One', 400, yatraDeva, 'U+0900-097F,U+200C-200D,U+25CC'),
+  face('Teko Variable', '300 700', tekoLatin, LATIN),
+  face('Teko Variable', '300 700', tekoRupee, 'U+20B9'),
+  face('Hind', 400, hind400, `${LATIN},U+20B9`),
+  // The 600 file also answers 700: only the footer phone number asks for bold.
+  face('Hind', '600 700', hind600, `${LATIN},U+20B9`),
+].join('');
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -57,8 +91,12 @@ const jsonLd = {
     <title>{title}</title>
     <meta name="description" content={description} />
     <meta name="theme-color" content="#0d0807" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="apple-mobile-web-app-title" content={site.name} />
     <link rel="canonical" href={canonical} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
 
     <meta property="og:type" content="restaurant.restaurant" />
     <meta property="og:site_name" content={site.name} />
@@ -71,8 +109,11 @@ const jsonLd = {
     <meta property="og:image:alt" content={`${site.name} signboard: ${site.tagline}`} />
     <meta name="twitter:card" content="summary_large_image" />
 
+    {/* The shutter paints the shop name (Yatra One), the Hindi line and the counter (Teko) first. */}
     <link rel="preload" href={yatraLatin} as="font" type="font/woff2" crossorigin />
     <link rel="preload" href={tekoLatin} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={yatraDeva} as="font" type="font/woff2" crossorigin />
+    <style is:inline set:html={fontCss}></style>
 
     <!--
       Decides how this visit opens, before first paint.

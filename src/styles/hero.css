@@ -230,12 +230,16 @@
 .sparks--front {
   z-index: 4;
 }
+/* One design pixel is one em here (font-size: --u), so the keyframes never have to resolve
+   the stage unit themselves: that unit depends on the container, and re-reading it for every
+   spark on every frame was the most expensive thing on the page. */
 .spark {
   position: absolute;
   bottom: var(--sy);
   left: var(--sx);
-  width: calc(var(--ss) * var(--u));
-  height: calc(var(--ss) * var(--u));
+  font-size: var(--u);
+  width: calc(var(--ss) * 1em);
+  height: calc(var(--ss) * 1em);
   border-radius: 50%;
   background: var(--flame-yellow);
   opacity: 0;
@@ -243,7 +247,7 @@
 }
 .sparks--front .spark {
   --so: 0.8;
-  filter: blur(calc(1.6 * var(--u)));
+  filter: blur(1.6em);
 }
 @keyframes spark {
   0% {
@@ -254,8 +258,26 @@
     opacity: var(--so, 0.95);
   }
   100% {
-    transform: translate(calc(var(--sdx) * var(--u)), calc(var(--sdy) * var(--u))) scale(0.2);
+    transform: translate(calc(var(--sdx) * 1em), calc(var(--sdy) * 1em)) scale(0.2);
     opacity: 0;
+  }
+}
+
+/* The loops stand still while nobody can see them: under the shutter until the reveal starts
+   (html.preload is gone if the script never finishes, so a stuck page still comes alive), and
+   whenever the hero has scrolled off screen (hero.js toggles .is-off). Named, not `*`, so that
+   flipping the class restyles a few dozen elements instead of the whole drawing. Anything that
+   gets a loop of its own (here or in WokArt) belongs in this list. */
+html.preload .hero:not(.is-live) :is(.spark, .flame__flick, .jet, .ember, .steam, .toss__inner, .hero__glow i, .hero__name),
+.hero.is-off :is(.spark, .flame__flick, .jet, .ember, .steam, .toss__inner, .hero__glow i, .hero__name) {
+  animation-play-state: paused;
+}
+
+/* Phones and touch screens: fewer sparks (8 behind the wok, 2 in front of it) */
+@media (hover: none), (max-width: 899px) {
+  .sparks:not(.sparks--front) .spark:nth-child(n + 9),
+  .sparks--front .spark:nth-child(n + 3) {
+    display: none;
   }
 }
 
@@ -453,6 +475,19 @@
   color: var(--soot);
   border-bottom: 3px solid var(--chilli);
 }
+/* a 44px thumb target without moving the underline: the extra reach is an invisible layer on the link */
+@media (hover: none), (pointer: coarse) {
+  .hero__rates-more {
+    position: relative;
+    z-index: 1; /* above the price rows it overlaps */
+  }
+  .hero__rates-more::after {
+    content: '';
+    position: absolute;
+    /* measured from inside the 3px underline: about 47px in all, the line staying where it is */
+    inset: -11px -8px -14px;
+  }
+}
 .hero__rates-more svg {
   width: 1em;
   height: 1em;
@@ -531,6 +566,11 @@
   .hero__drum {
     height: max(12px, calc(16 * var(--u)));
   }
+  /* on a wall this dark, screen and plain alpha look the same, and plain alpha does not make the
+     browser blend a full-screen layer against everything beneath it on every frame */
+  .hero__glow {
+    mix-blend-mode: normal;
+  }
   .hero__glow i {
     background:
       radial-gradient(
@@ -594,7 +634,7 @@
   }
   .hero__rates-sub {
     margin-bottom: calc(4 * var(--u));
-    font-size: max(11px, calc(14 * var(--u)));
+    font-size: max(12px, calc(14 * var(--u)));
   }
   .hero__rates-lines {
     margin-bottom: calc(4 * var(--u));

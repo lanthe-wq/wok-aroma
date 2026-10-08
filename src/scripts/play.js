@@ -26,76 +26,85 @@ function initWok() {
 
   const flames = qa('.flame', art);
   const food = q('.wok__food', art);
-  const bits = qa('.toss', art);
   if (!food || !flames.length) return;
 
   const root = document.documentElement;
   art.classList.add('is-tossable');
 
-  // Each piece has its own height, drift and spin; fixed, so every toss is the same toss.
-  // The group only travels (the idle loops own the inner group), and the spin is applied to
-  // the drawn shape itself so it turns about its own middle. The second leg exactly undoes the first.
-  const shapes = bits.map((el) => q('.toss__inner > *', el));
-  const rise = bits.map((el, i) => {
-    const y0 = Number(el.dataset.y) || 100;
-    return Math.min(70 + ((i * 41) % 64), y0 + 60);
-  });
-  const drift = bits.map((_, i) => (((i * 53) % 40) - 20) * 0.6 + (i % 2 ? 6 : -6));
-  const spin = bits.map((_, i) => ((i * 71) % 300) - 150);
-  const stagger = 0.012;
+  // The timeline is built on the first tap, not at load: it is a few dozen tweens that nobody
+  // needs until someone touches the wok.
+  let toss = null;
+  const build = () => {
+    // pieces hidden on small screens (hero.css / WokArt) are left out
+    const bits = qa('.toss', art).filter((el) => el.getClientRects().length);
 
-  const toss = gsap.timeline({ paused: true });
-  toss
-    // the burner roars: flames stretch up from the middle outwards, then settle
-    .to(
-      flames,
-      {
-        scaleY: 1.3,
-        transformOrigin: '50% 100%',
-        duration: 0.2,
-        ease: 'power2.out',
-        stagger: { each: 0.028, from: 'center' },
-      },
-      0,
-    )
-    .to(
-      flames,
-      { scaleY: 1, duration: 0.9, ease: 'expo.out', stagger: { each: 0.028, from: 'center' } },
-      0.2,
-    )
-    // the heap in the bowl is flipped
-    .to(food, { y: -12, duration: 0.2, ease: 'power2.out' }, 0)
-    .to(food, { y: 0, duration: 0.55, ease: 'expo.out' }, 0.2)
-    // up and over...
-    .to(
-      bits,
-      {
-        y: (i) => `-=${rise[i]}`,
-        x: (i) => `+=${drift[i]}`,
-        duration: 0.5,
-        ease: 'power2.out',
-        stagger,
-      },
-      0.04,
-    )
-    .to(shapes, { rotation: (i) => spin[i], duration: 0.5, ease: 'power2.out', stagger }, 0.04)
-    // ...and back down into the wok
-    .to(
-      bits,
-      {
-        y: (i) => `+=${rise[i]}`,
-        x: (i) => `-=${drift[i]}`,
-        duration: 0.5,
-        ease: 'power2.in',
-        stagger,
-      },
-      0.56,
-    )
-    .to(shapes, { rotation: 0, duration: 0.5, ease: 'power2.in', stagger }, 0.56);
+    // Each piece has its own height, drift and spin; fixed, so every toss is the same toss.
+    // The group only travels (the idle loops own the inner group), and the spin is applied to
+    // the drawn shape itself so it turns about its own middle. The second leg exactly undoes the first.
+    const shapes = bits.map((el) => q('.toss__inner > *', el));
+    const rise = bits.map((el, i) => {
+      const y0 = Number(el.dataset.y) || 100;
+      return Math.min(70 + ((i * 41) % 64), y0 + 60);
+    });
+    const drift = bits.map((_, i) => (((i * 53) % 40) - 20) * 0.6 + (i % 2 ? 6 : -6));
+    const spin = bits.map((_, i) => ((i * 71) % 300) - 150);
+    const stagger = 0.012;
+
+    const tl = gsap.timeline({ paused: true });
+    tl
+      // the burner roars: flames stretch up from the middle outwards, then settle
+      .to(
+        flames,
+        {
+          scaleY: 1.3,
+          transformOrigin: '50% 100%',
+          duration: 0.2,
+          ease: 'power2.out',
+          stagger: { each: 0.028, from: 'center' },
+        },
+        0,
+      )
+      .to(
+        flames,
+        { scaleY: 1, duration: 0.9, ease: 'expo.out', stagger: { each: 0.028, from: 'center' } },
+        0.2,
+      )
+      // the heap in the bowl is flipped
+      .to(food, { y: -12, duration: 0.2, ease: 'power2.out' }, 0)
+      .to(food, { y: 0, duration: 0.55, ease: 'expo.out' }, 0.2)
+      // up and over...
+      .to(
+        bits,
+        {
+          y: (i) => `-=${rise[i]}`,
+          x: (i) => `+=${drift[i]}`,
+          duration: 0.5,
+          ease: 'power2.out',
+          stagger,
+        },
+        0.04,
+      )
+      .to(shapes, { rotation: (i) => spin[i], duration: 0.5, ease: 'power2.out', stagger }, 0.04)
+      // ...and back down into the wok
+      .to(
+        bits,
+        {
+          y: (i) => `+=${rise[i]}`,
+          x: (i) => `-=${drift[i]}`,
+          duration: 0.5,
+          ease: 'power2.in',
+          stagger,
+        },
+        0.56,
+      )
+      .to(shapes, { rotation: 0, duration: 0.5, ease: 'power2.in', stagger }, 0.56);
+    return tl;
+  };
 
   // `click` rather than pointerdown: a finger dragging the page across the wok is not a tap
   art.addEventListener('click', () => {
     if (root.classList.contains('preload') || hero.classList.contains('is-igniting')) return;
+    if (!toss) toss = build();
     if (toss.isActive()) return;
     toss.restart();
   });
